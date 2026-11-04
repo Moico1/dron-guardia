@@ -1,0 +1,47 @@
+services:
+  master:
+    build:
+      context: ..
+      dockerfile: infrastructure/Dockerfile
+    hostname: master
+    environment:
+      ROLE: master
+    volumes:
+      - cluster_ssh:/shared/ssh
+    networks:
+      - cluster
+
+  worker1:
+    build:
+      context: ..
+      dockerfile: infrastructure/Dockerfile
+    hostname: worker1
+    environment:
+      ROLE: worker
+    volumes:
+      - cluster_ssh:/shared/ssh
+    depends_on:
+      - master
+    networks:
+      - cluster
+
+  worker2:
+    build:
+      context: ..
+      dockerfile: infrastructure/Dockerfile
+    hostname: worker2
+    environment:
+      ROLE: worker
+    volumes:
+      - cluster_ssh:/shared/ssh
+    depends_on:
+      - master
+    networks:
+      - cluster
+
+networks:
+  cluster:
+    driver: bridge
+
+volumes:
+  cluster_ssh:
