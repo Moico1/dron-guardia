@@ -4,35 +4,30 @@ Este checklist separa lo implementado de lo que debe ejecutarse y registrarse en
 
 ## Requisitos del hito
 
-| Requisito docente | Estado en el proyecto | Evidencia / acción para la revisión |
+| Requisito | Estado | Evidencia comprobada |
 |---|---|---|
-| Clúster virtualizado de 3 nodos (1 master + 2 workers) | Validado en Docker Compose: los tres contenedores están activos | `make cluster-up`; `docker compose -f infrastructure/compose.yaml ps` |
-| Red interna bridge, resolución de nombres y SSH sin contraseña | Validado desde master: DNS resolvió worker1/worker2 y ambos aceptaron SSH | `make cluster-test`; salida mostró los dos hostnames remotos |
-| GCC/G++ con OpenMP y OpenMPI, smoke test | Smoke MPI y smoke OpenMP independiente validados en host y `master` | `make smoke-omp`; `docker compose -f infrastructure/compose.yaml exec -T master /workspace/scripts/smoke_omp.sh` |
-| Código secuencial de referencia | Implementado en `src/sequential/fire_serial.c` | `./build/fire_serial -n 20000 -s 20261104 -b -1` |
-| Verificación de correctitud | Equivalencia serial/OpenMP/MPI comprobada con semilla fija; no equivale a validación científica del modelo de incendio | `make verify`; salida: `VERIFICACION_OK` |
-| Huella de memoria inicial | Medida por modo para serial, OpenMP y MPI; MPI se reporta como RSS del lanzador `mpirun` | `make memory-modes`; valores en `data/memory_modes.csv` |
-| Primera versión paralela | OpenMP por escenarios y MPI con partición cíclica y reducción | `make verify`; también ejecutada en los 3 nodos con `make cluster-test` |
-| Estructura oficial del repositorio | Carpetas `src/`, `infrastructure/`, `data/`, `scripts/`, `docs/` creadas | Estructura local lista; repositorio remoto: `https://github.com/Moico1/dron-guardia` |
-| README con clonación y arranque de contenedores | Instrucciones incluidas con URL real | `git clone https://github.com/Moico1/dron-guardia.git`; `make cluster-up` |
-| Correctitud por los tres modos | Validada en host y `master`; serial, OpenMP y MPI coincidieron | `make verify-modes`; salida `VERIFY_MODES_OK` |
-| Rendimiento por modo | Medido con 10 repeticiones, medianas, mínimos, máximos, desviación, speedup y eficiencia; clúster detenido | `REPEAT_COUNT=10 make performance-modes`; `data/performance_*.csv` |
-| Huella de memoria por modo | Medida para serial, OpenMP y MPI con `/usr/bin/time -v` | `make memory-modes`; `data/memory_modes.csv` |
+| 3.1: clúster de 1 master + 2 workers, arranque con un comando | Cumple | `make cluster-up`; `docker compose -f infrastructure/compose.yaml ps` mostró los tres contenedores `Up`. |
+| 3.2: red bridge y nombres | Cumple | `make cluster-test`; `compose.yaml` declara `driver: bridge`; salida `getent hosts` para master, worker1 y worker2. |
+| 3.3: SSH sin contraseña | Cumple | `make cluster-test`; SSH remoto devolvió `worker1` y `worker2` sin pedir contraseña. |
+| 3.4: gcc/g++, OpenMP y MPI smoke tests | Cumple | GCC/G++ 13.3.0; Open MPI 4.1.6; `make smoke-omp` dio `OPENMP_SMOKE_OK hilos=4`; `make cluster-test` dio `MPI_SMOKE_OK rank=0..2 size=3`. |
+| 3.5: referencia serial, correctitud en los tres modos y memoria | Cumple | `make verify` dio 6765; `make verify-modes` dio `VERIFY_MODES_OK`; `data/performance_summary.csv` y `data/memory_modes.csv`. |
+| 3.6: primera versión paralela | Cumple | `src/parallel/fire_omp.c`, `src/parallel/fire_mpi.c`; `make verify` y `make cluster-test`. |
+| 3.7: estructura del repositorio | Cumple | Contenido en `src/`, `infrastructure/`, `data/`, `scripts/` y `docs/`. |
+| 3.8: README con clonación, arranque, scripts y juego | Cumple | `README.md`; URL de GitHub, `make cluster-up`, pruebas, y `python3 -m http.server 8765`. |
+| Demostración técnica completa | Parcial | Guion cronometrado agregado abajo; ejecución de `scripts/demo_completa.sh` pendiente de registrar en esta versión. |
 
 ## Datos verificados en la ejecución actual
 
 - Hardware visible durante la medición: `nproc=4`, `MemTotal=12258180 kB` (aprox. 11,69 GiB). No se afirma que esta medición corresponda a toda la capacidad nominal de la Dell OptiPlex del laboratorio.
-- GCC 13.3.0, OpenMPI 4.1.6 y Docker Engine 28.1.1 están instalados.
+- GCC/G++ 13.3.0, Open MPI 4.1.6 y Docker 29.8.1 se comprobaron en esta ejecución.
 - Las tres implementaciones C compilaron con `-Wall -Wextra -Wpedantic`.
 - `make verify` pasó con 20.000 escenarios: serial, 8 combinaciones OpenMP y MPI reportaron 6.765 impactos.
 - `make cluster-test` pasó: resolución de nombres, SSH a dos workers, smoke test MPI de 3 ranks y simulación distribuida con 20.000 escenarios.
 - `make smoke-omp` produjo `OPENMP_SMOKE_OK hilos=4`; el mismo script pasó dentro de `master`.
 - `make verify-modes` produjo `VERIFY_MODES_OK`; los tres modos coincidieron entre serial, OpenMP y MPI. El script también pasó dentro de `master`.
-- `make performance-modes` ejecutó 5 repeticiones por modo para serial, OpenMP con 1/2/4/8 hilos y MPI con 1/2/3 procesos. Los resultados completos están en `data/performance_modes.csv` y `data/performance_summary.csv`.
-- `make memory-modes` midió serial, OpenMP y MPI para los tres modos con `/usr/bin/time -v`; los resultados completos están en `data/memory_modes.csv`.
-- El juego web se reconstruyó como tres experiencias: reconocimiento con niebla/batería, contención con barreras y viento cambiante, y priorización de viviendas/camino. Las pruebas funcionales incluyen los tres modos y 10 reinicios por modo.
-- En PC a 1366×768 el canvas mantiene 8:5 y el botón de pantalla completa se activa correctamente. El modo `wind` del juego gira el viento a los 20 s; el motor C documenta ese cambio como metadato porque no soporta viento temporal.
-- En la versión actual, terminar en el segundo 0 mostró «Requiere práctica · 30/100» y el desglose tiempo 0/30, comunidad 30/30 y focos 0/40, con consejo sobre la situación elegida.
+- `REPEAT_COUNT=10 ./scripts/performance_modes.sh` se ejecutó con Docker Compose detenido. Los CSV guardan mediana, mínimo, máximo y desviación poblacional; el equipo medido no es la OptiPlex 7010.
+- `make memory-modes` midió procesos serial/OpenMP y cada rank MPI con `/usr/bin/time -v`; el CSV incluye máximo individual y suma de RSS por ranks.
+- El juego presenta tres experiencias: reconocimiento con niebla/batería, contención con barreras y viento cambiante, y priorización de viviendas/camino. La ejecución de navegador actual solo confirmó carga del selector a 390×844; el click automatizado no se estabilizó. Bots de victoria/derrota, diez reinicios y FPS quedan pendientes de evidencia reproducible.
 - El clúster permanece levantado para poder demostrarlo; detenerlo con `make cluster-down`.
 
 ## Demostración del juego (1 minuto)
@@ -43,15 +38,18 @@ Este checklist separa lo implementado de lo que debe ejecutarse y registrarse en
 4. **40–55 s:** cambiar a `interface`; señalar estados de viviendas, amenaza del camino y agua; priorizar un sector antes de descargar.
 5. **55–60 s:** terminar manualmente una partida para mostrar la evaluación y cerrar recordando los límites educativos.
 
-## Guion de demostración del proyecto (10 minutos)
+## Guion cronometrado de demostración (10 minutos)
 
-1. Ejecutar la demostración del juego de un minuto.
-2. Mostrar el código C serial y explicar que cada carga `.conf` usa semilla fija.
-3. Ejecutar `make verify` y `make verify-modes`; señalar la coincidencia serial/OpenMP/MPI.
-4. Ejecutar `make cluster-up`, `make cluster-test` y `make smoke-omp` en `master`; mostrar DNS, SSH y smoke tests.
-5. Ejecutar `REPEAT_COUNT=10 make performance-modes` y `make memory-modes`; explicar T1, speedup, eficiencia y RSS usando los CSV versionados.
-6. Ejecutar `docker stats` mientras corre `./scripts/demo_recursos.sh --run` y mostrar recursos de los tres contenedores.
-7. Aclarar que el juego web y el motor C son componentes separados; las mediciones deben repetirse en la Dell OptiPlex 7010 del laboratorio.
+| Tiempo | Actividad |
+|---|---|
+| 0:00–1:00 (1 min) | `make cluster-up`; mostrar master y dos workers. |
+| 1:00–2:00 (1 min) | `make cluster-test`; señalar DNS, SSH sin contraseña y smoke MPI. |
+| 2:00–5:00 (3 min) | Ejecutar `make verify-modes`; comparar firmas serial/OpenMP/MPI en `recon`, `wind` e `interface`. |
+| 5:00–7:00 (2 min) | `./scripts/demo_recursos.sh --run`; observar `docker stats` y explicar que es una muestra puntual. |
+| 7:00–8:00 (1 min) | Abrir `http://localhost:8765/dron_guardian.html`; mostrar los tres modos y sus límites educativos. |
+| 8:00–10:00 (2 min) | Preguntas y respuestas; aclarar mediciones pendientes en la Dell OptiPlex 7010. |
+
+Las duraciones son el guion de exposición, no una medición de cronómetro. `scripts/demo_completa.sh` ejecuta las comprobaciones técnicas con pausas para la presentación.
 
 ## Límites que deben explicarse
 
@@ -62,6 +60,7 @@ Este checklist separa lo implementado de lo que debe ejecutarse y registrarse en
 
 ## Pendiente para cierre administrativo del Hito 2
 
-1. Conservar capturas/salidas del clúster, `docker stats`, rendimiento y memoria como evidencia de la revisión.
-2. Si el docente espera validación del modelo físico además de equivalencia de implementaciones, añadir una prueba analítica o contraste con datos de incendios; el prototipo actual solo es sintético.
-3. Completar nombres y número de equipo en `docs/hito1-perfil-tecnico.md`; entregar el perfil dentro del límite solicitado.
+1. Repetir rendimiento y memoria en la Dell OptiPlex 7010.
+2. Ejecutar y guardar evidencia de bots de victoria/derrota, diez reinicios, viewport móvil y FPS.
+3. Confirmar con el docente que la web queda fuera de la paralelización; el motor paralelo evaluado es C.
+4. Si se requiere validar un modelo físico, contrastarlo con datos reales; el actual es sintético.

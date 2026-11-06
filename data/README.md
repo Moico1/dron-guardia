@@ -12,8 +12,8 @@ El motor acepta una configuración con `-c`:
 mpirun --allow-run-as-root -np 3 ./build/fire_mpi -c data/interface.conf
 ```
 
-La malla configurada debe coincidir con la malla C actual de `24 x 16`. Las mediciones CSV se crean aquí mediante `make benchmark` y están excluidas de Git.
+La malla configurada debe coincidir con la malla C actual de `24 x 16`. Las mediciones crudas `performance_modes.csv` se generan con `make performance-modes` y están excluidas de Git.
 
-`performance_summary.csv` y `memory_modes.csv` se versionan como evidencia de la medicion realizada en el entorno actual (`nproc=4`, `MemTotal=12258180 kB`, aproximadamente 11,69 GiB). Este entorno no es la Dell OptiPlex 7010 del laboratorio; sus mediciones deben repetirse alli.
+`performance_summary.csv` y `memory_modes.csv` se versionan como evidencia de medicion en este entorno (`nproc=4`, `MemTotal=12258180 kB`, aproximadamente 11,69 GiB). Este equipo no es la Dell OptiPlex 7010 del laboratorio; hay que repetir las mediciones alli.
 
-En `memory_modes.csv`, `max_rss_kb` para MPI es el mayor pico individual entre los ranks y `suma_rank_rss_kb` es la suma de las RSS máximas de cada proceso MPI, medidas ejecutando cada rank bajo `/usr/bin/time -v`. Serial y OpenMP reportan la RSS máxima de su proceso.
+En `memory_modes.csv`, `max_rss_kb` es el pico individual mayor entre los ranks MPI y `suma_rank_rss_kb` suma la RSS maxima reportada por cada rank. Cada proceso se mide con `/usr/bin/time -v`; serial y OpenMP registran la RSS de su proceso. La suma MPI puede contar paginas compartidas más de una vez.

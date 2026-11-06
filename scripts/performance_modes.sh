@@ -37,7 +37,8 @@ measure() {
     minimum=$(printf '%s\n' "$sorted" | sed -n '1p')
     median=$(printf '%s\n' "$sorted" | awk '{ values[NR] = $1 } END { if (NR % 2) printf "%.6f", values[(NR + 1) / 2]; else printf "%.6f", (values[NR / 2] + values[NR / 2 + 1]) / 2 }')
     maximum=$(printf '%s\n' "$sorted" | tail -n 1)
-    deviation=$(printf '%s\n' "$sorted" | awk -v mean="$median" '{ sum += ($1 - mean) * ($1 - mean) } END { printf "%.6f", sqrt(sum / NR) }')
+    mean=$(printf '%s\n' "$sorted" | awk '{ sum += $1 } END { printf "%.9f", sum / NR }')
+    deviation=$(printf '%s\n' "$sorted" | awk -v mean="$mean" '{ sum += ($1 - mean) * ($1 - mean) } END { printf "%.6f", sqrt(sum / NR) }')
     printf '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n' "$mode" "$variant" "$workers" "$repetitions" "$median" "$minimum" "$maximum" "$deviation" "$nproc_value" "$ram_kb" >> "$output"
 }
 

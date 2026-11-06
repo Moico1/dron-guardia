@@ -1,25 +1,25 @@
 modo,variante,trabajadores,max_rss_kb,suma_rank_rss_kb,nproc,ram_kb,observacion
 recon,serial,1,1708,1708,4,12258180,RSS del proceso serial medido por /usr/bin/time -v
-recon,openmp,1,1952,1952,4,12258180,RSS del proceso OpenMP medido por /usr/bin/time -v
-recon,openmp,2,1920,1920,4,12258180,RSS del proceso OpenMP medido por /usr/bin/time -v
+recon,openmp,1,1960,1960,4,12258180,RSS del proceso OpenMP medido por /usr/bin/time -v
+recon,openmp,2,1976,1976,4,12258180,RSS del proceso OpenMP medido por /usr/bin/time -v
 recon,openmp,4,2104,2104,4,12258180,RSS del proceso OpenMP medido por /usr/bin/time -v
-recon,openmp,8,2104,2104,4,12258180,RSS del proceso OpenMP medido por /usr/bin/time -v
-recon,mpi,1,15940,15940,4,12258180,pico por rank y suma de RSS de los ranks; medido por /usr/bin/time -v dentro de cada proceso
-recon,mpi,2,16064,31976,4,12258180,pico por rank y suma de RSS de los ranks; medido por /usr/bin/time -v dentro de cada proceso
-recon,mpi,3,16076,47612,4,12258180,pico por rank y suma de RSS de los ranks; medido por /usr/bin/time -v dentro de cada proceso
-wind,serial,1,1708,1708,4,12258180,RSS del proceso serial medido por /usr/bin/time -v
+recon,openmp,8,2072,2072,4,12258180,RSS del proceso OpenMP medido por /usr/bin/time -v
+recon,mpi,1,15852,15852,4,12258180,pico individual máximo y suma de RSS de los ranks; /usr/bin/time -v dentro de cada rank
+recon,mpi,2,16012,31976,4,12258180,pico individual máximo y suma de RSS de los ranks; /usr/bin/time -v dentro de cada rank
+recon,mpi,3,16056,47820,4,12258180,pico individual máximo y suma de RSS de los ranks; /usr/bin/time -v dentro de cada rank
+wind,serial,1,1704,1704,4,12258180,RSS del proceso serial medido por /usr/bin/time -v
 wind,openmp,1,1916,1916,4,12258180,RSS del proceso OpenMP medido por /usr/bin/time -v
-wind,openmp,2,1960,1960,4,12258180,RSS del proceso OpenMP medido por /usr/bin/time -v
-wind,openmp,4,2104,2104,4,12258180,RSS del proceso OpenMP medido por /usr/bin/time -v
-wind,openmp,8,2072,2072,4,12258180,RSS del proceso OpenMP medido por /usr/bin/time -v
-wind,mpi,1,15880,15880,4,12258180,pico por rank y suma de RSS de los ranks; medido por /usr/bin/time -v dentro de cada proceso
-wind,mpi,2,16112,32032,4,12258180,pico por rank y suma de RSS de los ranks; medido por /usr/bin/time -v dentro de cada proceso
-wind,mpi,3,16308,47940,4,12258180,pico por rank y suma de RSS de los ranks; medido por /usr/bin/time -v dentro de cada proceso
+wind,openmp,2,1916,1916,4,12258180,RSS del proceso OpenMP medido por /usr/bin/time -v
+wind,openmp,4,2088,2088,4,12258180,RSS del proceso OpenMP medido por /usr/bin/time -v
+wind,openmp,8,2088,2088,4,12258180,RSS del proceso OpenMP medido por /usr/bin/time -v
+wind,mpi,1,15824,15824,4,12258180,pico individual máximo y suma de RSS de los ranks; /usr/bin/time -v dentro de cada rank
+wind,mpi,2,16020,31936,4,12258180,pico individual máximo y suma de RSS de los ranks; /usr/bin/time -v dentro de cada rank
+wind,mpi,3,15896,47424,4,12258180,pico individual máximo y suma de RSS de los ranks; /usr/bin/time -v dentro de cada rank
 interface,serial,1,1708,1708,4,12258180,RSS del proceso serial medido por /usr/bin/time -v
 interface,openmp,1,1908,1908,4,12258180,RSS del proceso OpenMP medido por /usr/bin/time -v
-interface,openmp,2,1976,1976,4,12258180,RSS del proceso OpenMP medido por /usr/bin/time -v
+interface,openmp,2,1908,1908,4,12258180,RSS del proceso OpenMP medido por /usr/bin/time -v
 interface,openmp,4,2072,2072,4,12258180,RSS del proceso OpenMP medido por /usr/bin/time -v
-interface,openmp,8,2104,2104,4,12258180,RSS del proceso OpenMP medido por /usr/bin/time -v
-interface,mpi,1,15972,15972,4,12258180,pico por rank y suma de RSS de los ranks; medido por /usr/bin/time -v dentro de cada proceso
-interface,mpi,2,16120,32148,4,12258180,pico por rank y suma de RSS de los ranks; medido por /usr/bin/time -v dentro de cada proceso
-interface,mpi,3,15996,47420,4,12258180,pico por rank y suma de RSS de los ranks; medido por /usr/bin/time -v dentro de cada proceso
+interface,openmp,8,1848,1848,4,12258180,RSS del proceso OpenMP medido por /usr/bin/time -v
+interface,mpi,1,15980,15980,4,12258180,pico individual máximo y suma de RSS de los ranks; /usr/bin/time -v dentro de cada rank
+interface,mpi,2,16120,32152,4,12258180,pico individual máximo y suma de RSS de los ranks; /usr/bin/time -v dentro de cada rank
+interface,mpi,3,15880,47416,4,12258180,pico individual máximo y suma de RSS de los ranks; /usr/bin/time -v dentro de cada rank
