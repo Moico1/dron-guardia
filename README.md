@@ -116,7 +116,7 @@ make memory-modes
 
 `make benchmark` genera `data/benchmark.csv` con tres repeticiones, dos tamaños de carga y varios conteos de hilos. `make memory` muestra el máximo de memoria residente reportado por `/usr/bin/time -v`.
 
-`make performance-modes` mide cinco repeticiones por modo, serial, OpenMP (1, 2, 4 y 8 hilos) y MPI (1, 2 y 3 procesos). Para repetir diez veces con el clúster detenido: `REPEAT_COUNT=10 make performance-modes`. Genera `data/performance_modes.csv` y `data/performance_summary.csv` con medianas, mínimos, máximos, desviación estándar, speedup y eficiencia. `make memory-modes` genera `data/memory_modes.csv` para serial, OpenMP y MPI; en MPI registra la RSS del lanzador `mpirun`, no la suma de los ranks.
+`make performance-modes` mide cinco repeticiones por modo, serial, OpenMP (1, 2, 4 y 8 hilos) y MPI (1, 2 y 3 procesos). Para repetir diez veces con el clúster detenido: `REPEAT_COUNT=10 make performance-modes`. Genera `data/performance_modes.csv` y `data/performance_summary.csv` con medianas, mínimos, máximos, desviación estándar, speedup y eficiencia. `make memory-modes` genera `data/memory_modes.csv` para serial, OpenMP y MPI; en MPI ejecuta `/usr/bin/time -v` dentro de cada rank y registra el máximo individual y la suma de RSS.
 
 Para la demostración de recursos:
 
@@ -126,6 +126,8 @@ docker stats infrastructure-master-1 infrastructure-worker1-1 infrastructure-wor
 ```
 
 También se puede iniciar una carga de demostración con `./scripts/demo_recursos.sh --run` y tomar una captura de `docker stats` mientras corre.
+
+La secuencia técnica completa, con pausas para explicar cada paso, se ejecuta con `./scripts/demo_completa.sh`. Para ejecutarla sin pausas interactivas: `DEMO_NO_PAUSE=1 ./scripts/demo_completa.sh`.
 
 ## Alcance y validez
 
