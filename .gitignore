@@ -1,2 +1,4 @@
 build/
 data/*.csv
+!data/performance_summary.csv
+!data/memory_modes.csv

@@ -3,7 +3,7 @@ MPICC ?= mpicc
 CFLAGS ?= -O3 -march=native -std=c11 -Wall -Wextra -Wpedantic
 OPENMP_FLAGS = -fopenmp
 
-.PHONY: all clean verify benchmark memory cluster-up cluster-test cluster-down
+.PHONY: all clean verify verify-modes smoke-omp benchmark performance-modes memory memory-modes demo-recursos cluster-up cluster-test cluster-down
 
 all: build/fire_serial build/fire_omp build/fire_mpi build/mpi_smoke
 
@@ -25,11 +25,26 @@ build/mpi_smoke: src/parallel/mpi_smoke.c | build
 verify: all
 	./scripts/verify.sh
 
+verify-modes: all
+	./scripts/verify_modes.sh
+
+smoke-omp:
+	./scripts/smoke_omp.sh
+
 benchmark: all
 	./scripts/benchmark.sh
 
+performance-modes: all
+	./scripts/performance_modes.sh
+
 memory: all
 	./scripts/memory.sh
+
+memory-modes: all
+	./scripts/memory_modes.sh
+
+demo-recursos:
+	./scripts/demo_recursos.sh
 
 cluster-up:
 	docker compose -f infrastructure/compose.yaml up -d --build

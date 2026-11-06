@@ -1,0 +1,25 @@
+modo,variante,trabajadores,max_rss_kb,nproc,ram_kb,observacion
+recon,serial,1,1588,4,12258180,RSS del proceso medido por /usr/bin/time -v
+recon,openmp,1,1932,4,12258180,RSS del proceso medido por /usr/bin/time -v
+recon,openmp,2,1964,4,12258180,RSS del proceso medido por /usr/bin/time -v
+recon,openmp,4,2092,4,12258180,RSS del proceso medido por /usr/bin/time -v
+recon,openmp,8,2092,4,12258180,RSS del proceso medido por /usr/bin/time -v
+recon,mpi,1,15964,4,12258180,RSS del lanzador mpirun medido por /usr/bin/time -v; no es suma de ranks
+recon,mpi,2,16216,4,12258180,RSS del lanzador mpirun medido por /usr/bin/time -v; no es suma de ranks
+recon,mpi,3,15992,4,12258180,RSS del lanzador mpirun medido por /usr/bin/time -v; no es suma de ranks
+wind,serial,1,1572,4,12258180,RSS del proceso medido por /usr/bin/time -v
+wind,openmp,1,1964,4,12258180,RSS del proceso medido por /usr/bin/time -v
+wind,openmp,2,1964,4,12258180,RSS del proceso medido por /usr/bin/time -v
+wind,openmp,4,2092,4,12258180,RSS del proceso medido por /usr/bin/time -v
+wind,openmp,8,2092,4,12258180,RSS del proceso medido por /usr/bin/time -v
+wind,mpi,1,16080,4,12258180,RSS del lanzador mpirun medido por /usr/bin/time -v; no es suma de ranks
+wind,mpi,2,16420,4,12258180,RSS del lanzador mpirun medido por /usr/bin/time -v; no es suma de ranks
+wind,mpi,3,16164,4,12258180,RSS del lanzador mpirun medido por /usr/bin/time -v; no es suma de ranks
+interface,serial,1,1704,4,12258180,RSS del proceso medido por /usr/bin/time -v
+interface,openmp,1,1932,4,12258180,RSS del proceso medido por /usr/bin/time -v
+interface,openmp,2,1964,4,12258180,RSS del proceso medido por /usr/bin/time -v
+interface,openmp,4,2076,4,12258180,RSS del proceso medido por /usr/bin/time -v
+interface,openmp,8,2032,4,12258180,RSS del proceso medido por /usr/bin/time -v
+interface,mpi,1,16092,4,12258180,RSS del lanzador mpirun medido por /usr/bin/time -v; no es suma de ranks
+interface,mpi,2,16152,4,12258180,RSS del lanzador mpirun medido por /usr/bin/time -v; no es suma de ranks
+interface,mpi,3,15960,4,12258180,RSS del lanzador mpirun medido por /usr/bin/time -v; no es suma de ranks

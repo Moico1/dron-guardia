@@ -13,3 +13,5 @@ mpirun --allow-run-as-root -np 3 ./build/fire_mpi -c data/interface.conf
 ```
 
 La malla configurada debe coincidir con la malla C actual de `24 x 16`. Las mediciones CSV se crean aquí mediante `make benchmark` y están excluidas de Git.
+
+`performance_summary.csv` y `memory_modes.csv` se versionan como evidencia de la medicion realizada en el entorno actual (`nproc=4`, `MemTotal=12258180 kB`, aproximadamente 11,69 GiB). Este entorno no es la Dell OptiPlex 7010 del laboratorio; sus mediciones deben repetirse alli.
