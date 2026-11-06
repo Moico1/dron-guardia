@@ -8,7 +8,7 @@
 
 static void usage(const char *program)
 {
-    fprintf(stderr, "Uso: %s [-n simulaciones] [-s semilla] [-b columna_cortafuego] [-t hilos] [-S static|dynamic]\n", program);
+    fprintf(stderr, "Uso: %s [-c|--config archivo] [-n simulaciones] [-s semilla] [-b columna_cortafuego] [-t hilos] [-S static|dynamic]\n", program);
 }
 
 int main(int argc, char **argv)
@@ -18,14 +18,25 @@ int main(int argc, char **argv)
     int firebreak_column = -1;
     int threads = 0;
     omp_sched_t schedule = omp_sched_static;
+    FireConfig config;
+    fire_config_defaults(&config);
     for (int index = 1; index < argc; index++) {
         char *end = NULL;
         errno = 0;
         if (argv[index][0] != '-' || index + 1 >= argc) { usage(argv[0]); return 2; }
+        if (strcmp(argv[index], "--config") == 0) {
+            if (fire_config_load(argv[++index], &config) != 0) { usage(argv[0]); return 2; }
+            simulations = config.simulations; seed = config.seed; firebreak_column = config.firebreak_column;
+            continue;
+        }
         switch (argv[index][1]) {
         case 'n': simulations = strtol(argv[++index], &end, 10); break;
         case 's': seed = strtoull(argv[++index], &end, 10); break;
         case 'b': firebreak_column = (int)strtol(argv[++index], &end, 10); break;
+        case 'c':
+            if (fire_config_load(argv[++index], &config) != 0) { usage(argv[0]); return 2; }
+            simulations = config.simulations; seed = config.seed; firebreak_column = config.firebreak_column;
+            continue;
         case 't': threads = (int)strtol(argv[++index], &end, 10); break;
         case 'S':
             index++;
