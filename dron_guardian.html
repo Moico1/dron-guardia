@@ -44,8 +44,8 @@
     .flight-head { min-height: 32px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
     h2 { margin: 0; font: 700 11px "Courier New", monospace; text-transform: uppercase; }
     .fullscreen-button { padding: 6px 9px; color: var(--ink); border: 1px solid var(--line); background: var(--panel); font: 10px "Courier New", monospace; cursor: pointer; }
-    .canvas-frame { position: relative; flex: 1; min-height: 300px; overflow: hidden; border: 1px solid #50614f; background: #1c2a20; }
-    canvas { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; max-height: calc(100vh - 180px); object-fit: contain; touch-action: none; }
+    .canvas-frame { position: relative; flex: 1; min-height: 300px; display: grid; place-items: center; overflow: hidden; border: 1px solid #50614f; background: #1c2a20; }
+    canvas { display: block; width: auto; height: auto; max-width: 100%; max-height: calc(100dvh - 320px); aspect-ratio: 3 / 2; touch-action: none; }
     .mission-banner { position: absolute; top: 9px; left: 9px; max-width: calc(100% - 18px); padding: 6px 9px; color: var(--ink); background: rgba(13,21,15,.86); border-left: 2px solid var(--gold); font: 10px "Courier New", monospace; pointer-events: none; }
     .legend { display: flex; flex-wrap: wrap; gap: 11px; padding: 7px 1px 0; color: var(--muted); font: 9px "Courier New", monospace; }
     .legend span { display: inline-flex; align-items: center; gap: 5px; }
@@ -105,7 +105,7 @@
       .main-grid { display: flex; flex-direction: column; }
       .flight-head { min-height: 28px; }
       .canvas-frame { flex: none; min-height: 0; }
-      canvas { max-height: none; }
+      canvas { width: 100%; max-height: none; }
       .side { overflow: visible; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .learning-panel { grid-column: 1 / -1; }
       .touch-controls { display: grid; }

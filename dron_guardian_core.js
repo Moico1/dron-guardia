@@ -93,6 +93,8 @@
       game.fpsTotalFrames = 0;
       game.phase = 'playing';
       overlay.hidden = true;
+      if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+      window.scrollTo(0, 0);
       hud.hidden = false;
       document.querySelector('#instructions').hidden = true;
       document.querySelector('#finish-mission').disabled = false;
@@ -250,8 +252,16 @@
     game.phase = 'select';
   });
   document.querySelector('#finish-mission').addEventListener('click', () => finish({ type: 'manual', reason: 'El piloto terminó la experiencia antes del límite.' }));
-  document.querySelector('#drop').addEventListener('click', () => sendAction('drop'));
-  document.querySelector('#refill').addEventListener('click', () => sendAction('refill'));
+  document.querySelector('#drop').addEventListener('click', event => {
+    sendAction('drop');
+    event.currentTarget.blur();
+    window.scrollTo(0, 0);
+  });
+  document.querySelector('#refill').addEventListener('click', event => {
+    sendAction('refill');
+    event.currentTarget.blur();
+    window.scrollTo(0, 0);
+  });
   document.querySelector('#restart').addEventListener('click', () => beginMode());
   document.querySelector('#back-modes').addEventListener('click', () => {
     clearInput(); game.mode = null; game.state = null; game.modeKey = null; game.elapsed = 0;
@@ -299,6 +309,7 @@
         elapsed: game.elapsed,
         fps: game.lastFps || 0,
         fpsAverage: game.fpsStarted ? game.fpsTotalFrames / Math.max(.001, (performance.now() - game.fpsStarted) / 1000) : 0,
+        drone: { x: game.drone.x, y: game.drone.y },
         hud: [...hud.querySelectorAll('.metric')].map(metric => metric.textContent),
         result: document.querySelector('#result-copy').textContent,
         state: game.mode && game.mode.snapshot ? game.mode.snapshot(game.state) : null
