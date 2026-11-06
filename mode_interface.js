@@ -26,7 +26,7 @@
     objectives: [
       ['Protege viviendas', 'Dos de las tres deben acabar seguras.'],
       ['Mantén el camino abierto', 'Una amenaza distante puede cortar el acceso.'],
-      ['Administra el agua', 'Hay tres cargas y una sola recarga en base.']
+      ['Administra el agua', 'Hay dos cargas y una sola recarga en base.']
     ],
     create({ grid, drone }) {
       const state = {
@@ -35,6 +35,7 @@
         fires: new Set(['1,6', '1,7', '1,8', '2,9']), burned: new Set(['1,6', '1,7', '1,8', '2,9']),
         spreadTimer: 0, spreadInterval: 1.15, randomSeed: 41711,
         water: 3, maxWater: 3, refills: 1,
+          water: 2, maxWater: 2, refills: 1,
         protection: [],
         road: { status: 'abierto', open: true, threatPoint: { x: 9, y: 13 }, deadline: null, resolved: false },
         midgameFront: false, roadEvent: false, remoteFire: null,

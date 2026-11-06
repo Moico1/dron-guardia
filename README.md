@@ -10,7 +10,7 @@ Abre `index.html` (redirige a `dron_guardian.html`) mediante un servidor local y
 
 - **Reconocimiento · inicial**: explora con niebla, descubre focos con el escáner y márcalos antes de agotar batería; gana al identificar dos de tres y pierde por tiempo o batería lejos de base.
 - **Viento cambiante · intermedio**: contiene el autómata celular con barreras temporales de agua y reorienta la defensa ante avisos de cambio; gana si el sector protegido sigue intacto hasta el final.
-- **Interfaz comunidad-monte · avanzado**: prioriza tres viviendas, un camino y frentes simultáneos con poca agua y una recarga; gana manteniendo dos viviendas seguras y el camino abierto.
+- **Interfaz comunidad-monte · avanzado**: prioriza tres viviendas, un camino y frentes simultáneos con 2 cargas y una recarga; gana manteniendo dos viviendas seguras y el camino abierto.
 
 En PC, usa `WASD`/flechas o haz clic en el mapa para volar; `Espacio` aplica la acción propia del modo, `R` recarga cuando las reglas lo permiten y **Terminar misión** muestra la evaluación. En móvil aparecen controles táctiles. **Pantalla completa** expande el simulador. Los resultados son didácticos y no describen decisiones para un incendio real.
 

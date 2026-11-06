@@ -44,6 +44,7 @@ Un bot puede ganar conteniendo las celdas del corredor hacia la zona y reajustan
 
 - **Clave:** `interface`.
 - **Duración:** 50 segundos, propuesta de diseño.
+- **Agua:** dos cargas iniciales y una sola recarga en la base.
 - **Mapa:** tablero distinto, con comunidad de viviendas al centro/este, base al oeste, camino principal entre ambos y frentes por lados diferentes.
 - **Mecánica:** gestionar prioridades. Hay tres viviendas con estados `segura`, `amenazada` y `afectada`. Las descargas enfrían un foco/celda seleccionada temporalmente; el agua es muy limitada y hay una sola recarga en base.
 - **Eventos:** un frente secundario aparece a mitad de partida; un foco distante amenaza el camino. El juego muestra avisos de amenaza antes de resolver el daño.
