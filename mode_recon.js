@@ -9,6 +9,7 @@
     description: 'EXPLORAR Y DETECTAR',
     duration: 60,
     controls: 'WASD/flechas vuelan; clic mueve sobre niebla o marca terreno revelado; M marca; Espacio descarga la práctica; R recarga batería al volver a base.',
+      controls: 'WASD/flechas vuelan; clic mueve sobre niebla o marca terreno revelado; M marca; Espacio descarga la práctica; R recupera batería en base.',
     lesson: 'Observa antes de actuar: localiza amenazas con el escáner y administra la batería para volver a la base.',
     observe: 'El círculo de escaneo descubre terreno, focos, la dirección del viento y el punto de entrada.',
     strategy: 'Traza una ruta que descubra varios focos y conserva energía para regresar.',

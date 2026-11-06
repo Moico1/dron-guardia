@@ -16,7 +16,7 @@ Este checklist separa lo implementado de lo que debe ejecutarse y registrarse en
 | Estructura oficial del repositorio | Carpetas `src/`, `infrastructure/`, `data/`, `scripts/`, `docs/` creadas | Estructura local lista; repositorio remoto: `https://github.com/Moico1/dron-guardia` |
 | README con clonación y arranque de contenedores | Instrucciones incluidas con URL real | `git clone https://github.com/Moico1/dron-guardia.git`; `make cluster-up` |
 | Correctitud por los tres modos | Validada en host y `master`; serial, OpenMP y MPI coincidieron | `make verify-modes`; salida `VERIFY_MODES_OK` |
-| Rendimiento por modo | Medido con 5 repeticiones, medianas, mínimos, máximos, speedup y eficiencia | `make performance-modes`; `data/performance_*.csv` |
+| Rendimiento por modo | Medido con 10 repeticiones, medianas, mínimos, máximos, desviación, speedup y eficiencia; clúster detenido | `REPEAT_COUNT=10 make performance-modes`; `data/performance_*.csv` |
 | Huella de memoria por modo | Medida para serial, OpenMP y MPI con `/usr/bin/time -v` | `make memory-modes`; `data/memory_modes.csv` |
 
 ## Datos verificados en la ejecución actual
@@ -30,22 +30,28 @@ Este checklist separa lo implementado de lo que debe ejecutarse y registrarse en
 - `make verify-modes` produjo `VERIFY_MODES_OK`; los tres modos coincidieron entre serial, OpenMP y MPI. El script también pasó dentro de `master`.
 - `make performance-modes` ejecutó 5 repeticiones por modo para serial, OpenMP con 1/2/4/8 hilos y MPI con 1/2/3 procesos. Los resultados completos están en `data/performance_modes.csv` y `data/performance_summary.csv`.
 - `make memory-modes` midió serial, OpenMP y MPI para los tres modos con `/usr/bin/time -v`; los resultados completos están en `data/memory_modes.csv`.
-- Dron Guardián se probó en navegador con tres modos de un jugador: vuelo, descarga, recarga, finalización manual, evaluación, repetición y regreso al selector.
+- El juego web se reconstruyó como tres experiencias: reconocimiento con niebla/batería, contención con barreras y viento cambiante, y priorización de viviendas/camino. Las pruebas funcionales incluyen los tres modos y 10 reinicios por modo.
 - En PC a 1366×768 el canvas mantiene 8:5 y el botón de pantalla completa se activa correctamente. El modo `wind` del juego gira el viento a los 20 s; el motor C documenta ese cambio como metadato porque no soporta viento temporal.
 - En la versión actual, terminar en el segundo 0 mostró «Requiere práctica · 30/100» y el desglose tiempo 0/30, comunidad 30/30 y focos 0/40, con consejo sobre la situación elegida.
 - El clúster permanece levantado para poder demostrarlo; detenerlo con `make cluster-down`.
 
-## Guion de demostración (10 minutos)
+## Demostración del juego (1 minuto)
 
-1. Abrir el juego con `python3 -m http.server 8765` y elegir uno de los tres modos; explicar su aprendizaje y dificultad.
-2. Volar hasta un foco, descargar agua, usar **Terminar misión** y mostrar la calificación si se cierra antes de completar el objetivo.
-3. En una segunda prueba, suprimir el frente y señalar la pausa de reaparición variable para controlar focos residuales.
-4. Mostrar el código serial como referencia y explicar que cada escenario C usa una semilla determinista propia.
-5. Ejecutar `make verify` y `make verify-modes`; señalar que serial, OpenMP y MPI producen el mismo conteo con cada configuración.
-6. Ejecutar `make cluster-up`, `make cluster-test` y el smoke OpenMP en `master`; mostrar los tres nodos, DNS, SSH y smoke tests.
-7. Ejecutar `make performance-modes` y `make memory-modes`; explicar T1, speedup, eficiencia y RSS con datos medidos.
-8. Ejecutar `docker stats` mientras corre `./scripts/demo_recursos.sh --run` y mostrar recursos de los tres contenedores.
-9. Mostrar la evaluación de uno de los tres modos y sus lecciones; aclarar que es material didáctico y que las mediciones deben repetirse en el laboratorio.
+1. **0–10 s:** mostrar la selección de tres experiencias y leer el aviso: mapa abstracto, juego sintético, no operativo.
+2. **10–25 s:** iniciar `recon`; volar hacia niebla, dejar que el escáner revele un foco y marcarlo con clic o `M`. Señalar batería y porcentaje explorado.
+3. **25–40 s:** cambiar a `wind`; mostrar la cuadrícula, viento actual/próximo y una línea de barrera con `Espacio`.
+4. **40–55 s:** cambiar a `interface`; señalar estados de viviendas, amenaza del camino y agua; priorizar un sector antes de descargar.
+5. **55–60 s:** terminar manualmente una partida para mostrar la evaluación y cerrar recordando los límites educativos.
+
+## Guion de demostración del proyecto (10 minutos)
+
+1. Ejecutar la demostración del juego de un minuto.
+2. Mostrar el código C serial y explicar que cada carga `.conf` usa semilla fija.
+3. Ejecutar `make verify` y `make verify-modes`; señalar la coincidencia serial/OpenMP/MPI.
+4. Ejecutar `make cluster-up`, `make cluster-test` y `make smoke-omp` en `master`; mostrar DNS, SSH y smoke tests.
+5. Ejecutar `REPEAT_COUNT=10 make performance-modes` y `make memory-modes`; explicar T1, speedup, eficiencia y RSS usando los CSV versionados.
+6. Ejecutar `docker stats` mientras corre `./scripts/demo_recursos.sh --run` y mostrar recursos de los tres contenedores.
+7. Aclarar que el juego web y el motor C son componentes separados; las mediciones deben repetirse en la Dell OptiPlex 7010 del laboratorio.
 
 ## Límites que deben explicarse
 

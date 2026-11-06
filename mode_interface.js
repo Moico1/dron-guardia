@@ -37,7 +37,7 @@
         water: 3, maxWater: 3, refills: 1,
         protection: [],
         road: { status: 'abierto', open: true, threatPoint: { x: 9, y: 13 }, deadline: null, resolved: false },
-        secondaryEvent: false, roadEvent: false, remoteFire: null,
+        midgameFront: false, roadEvent: false, remoteFire: null,
         feedback: 'El frente occidental avanza; observa las viviendas y conserva agua.',
         roadCells, timeScale: 1
       };
@@ -47,8 +47,8 @@
     },
     update(state, dt, elapsed, drone) {
       updateHouseThreats(state, elapsed);
-      if (!state.secondaryEvent && elapsed >= 25) {
-        state.secondaryEvent = true;
+      if (!state.midgameFront && elapsed >= 25) {
+        state.midgameFront = true;
         state.remoteFire = { x: 21, y: 1 };
         state.fires.add(cellKey(21, 1)); state.burned.add(cellKey(21, 1));
         state.feedback = 'Frente secundario desde el norte; un foco distante amenaza el camino.';
@@ -136,7 +136,7 @@
       const threatened = state.houses.filter(house => house.status === 'amenazada').length;
       const next = state.houses.filter(house => house.status === 'amenazada').map(house => `${house.id} ${Math.max(0, Math.ceil(house.deadline - elapsed))}s`);
       if (state.road.status !== 'abierto') next.push(`Camino ${Math.max(0, Math.ceil(state.road.deadline - elapsed))}s`);
-      if (state.secondaryEvent && !state.houses[2].resolved && state.houses[2].status === 'segura') next.push('Frente secundario');
+      if (state.midgameFront && !state.houses[2].resolved && state.houses[2].status === 'segura') next.push('Frente secundario');
       return [
         ['Viviendas', `${safe} seguras · ${threatened} amenazadas`, threatened > 0],
         ['Camino', state.road.status.toUpperCase(), !state.road.open],
@@ -159,7 +159,7 @@
       };
     },
     snapshot(state) {
-      return { houses: state.houses.map(house => ({ id: house.id, status: house.status, deadline: house.deadline, resolved: house.resolved })), road: { ...state.road }, water: state.water, refills: state.refills, secondaryEvent: state.secondaryEvent, fires: state.fires.size, feedback: state.feedback };
+      return { houses: state.houses.map(house => ({ id: house.id, status: house.status, deadline: house.deadline, resolved: house.resolved })), road: { ...state.road }, water: state.water, refills: state.refills, midgameFront: state.midgameFront, fires: state.fires.size, feedback: state.feedback };
     }
   };
 
@@ -254,7 +254,7 @@
     ctx.strokeStyle = '#72ccd0'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(base.x, base.y, 17, 0, Math.PI * 2); ctx.stroke();
     ctx.fillStyle = '#72ccd0'; ctx.font = 'bold 10px monospace'; ctx.textAlign = 'center'; ctx.fillText('BASE', base.x, base.y + 35);
     ctx.fillStyle = '#d7e2d4'; ctx.font = '11px monospace'; ctx.textAlign = 'left'; ctx.fillText(state.feedback, 14, 21);
-    if (state.secondaryEvent) {
+    if (state.midgameFront) {
       ctx.fillStyle = '#f0cb78'; ctx.textAlign = 'right'; ctx.fillText('FRENTE SECUNDARIO', 944, 21);
     }
   }

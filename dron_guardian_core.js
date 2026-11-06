@@ -249,6 +249,7 @@
     document.querySelector('#instructions').hidden = true;
     document.querySelector('#scenario-choices').hidden = false;
     document.querySelector('#instruction-actions').hidden = true;
+    setText('#mission-status', 'Selecciona modo');
     game.phase = 'select';
   });
   document.querySelector('#finish-mission').addEventListener('click', () => finish({ type: 'manual', reason: 'El piloto terminó la experiencia antes del límite.' }));
@@ -266,6 +267,7 @@
   document.querySelector('#back-modes').addEventListener('click', () => {
     clearInput(); game.mode = null; game.state = null; game.modeKey = null; game.elapsed = 0;
     hud.hidden = true; document.querySelector('#finish-mission').disabled = true;
+    setText('#mission-status', 'Selecciona modo');
     setOverlay('Elige una experiencia', 'Mapa abstracto y reglas sintéticas. No es una guía operativa ni predice incendios reales.', 'select');
   });
   document.querySelector('#fullscreen-toggle').addEventListener('click', async () => {

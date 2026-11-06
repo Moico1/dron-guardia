@@ -2,9 +2,9 @@
 
 ## Componentes separados
 
-Dron Guardian tiene dos componentes que no deben confundirse. El juego web (`dron_guardian.html` y `dron_guardian_training.js`) es una experiencia educativa 2D ejecutada en el navegador. El motor C (`src/`) ejecuta muchas simulaciones sinteticas independientes de propagacion y es el componente que se compara en serial, OpenMP y MPI.
+Dron Guardian tiene dos componentes que no deben confundirse. El juego web (`dron_guardian.html`, `dron_guardian_core.js` y `mode_recon.js`, `mode_wind.js`, `mode_interface.js`) ofrece tres experiencias educativas 2D ejecutadas en el navegador. El motor C (`src/`) ejecuta muchas simulaciones sinteticas independientes de propagacion y es el componente que se compara en serial, OpenMP y MPI.
 
-El navegador no invoca los binarios C. Los tres modos web solo sirven como nombres didacticos de cargas pequenas, medias y grandes para el motor C; no existe equivalencia matematica entre una partida y una ejecucion C.
+El navegador no invoca los binarios C. Los nombres `recon`, `wind` e `interface` tambien identifican cargas pequenas, medias y grandes para el motor C; no existe equivalencia matematica entre una partida y una ejecucion C. Los archivos `data/*.conf` describen esas cargas C, no reglas ni mapas del juego.
 
 ## Configuraciones y capacidades reales
 
@@ -18,7 +18,7 @@ El navegador no invoca los binarios C. Los tres modos web solo sirven como nombr
 
 Las cantidades de simulaciones son propuestas de progresion pequena, media y grande. La malla propuesta tambien se etiqueta en cada archivo como pequena, media o grande, pero el motor actual solo soporta `24 x 16`: `FIRE_WIDTH` y `FIRE_HEIGHT` son constantes en `src/include/fire_model.h`. Por eso cada archivo conserva `mesh_width=24` y `mesh_height=16`, y el lector rechaza otra malla sin cambiar la propagacion.
 
-El juego web si cambia el viento en `wind`; el motor C actual no soporta cambio temporal de viento: usa coeficientes discretos fijos por direccion dentro de `fire_model.h`. `wind_changes` y `wind_change_at_ms` se leen como metadatos de procedencia, pero no se aplican al calculo. `wind_intensity`, intervalos y combustible tambien documentan la relacion didactica; no son parametros fisicos configurables por el motor actual.
+El juego web `wind` cambia el viento y permite crear barreras temporales de agua; el motor C actual no modela ni el cambio de viento ni la contencion: usa coeficientes discretos fijos por direccion dentro de `fire_model.h`. `wind_changes` y `wind_change_at_ms` se leen como metadatos de procedencia, pero no se aplican al calculo. `wind_intensity`, intervalos, focos y combustible tambien documentan la relacion didactica; no son parametros fisicos configurables por el motor actual.
 
 ## Lectura y comparacion
 
@@ -47,6 +47,6 @@ Luego se visita `http://localhost:8765/index.html`.
 
 - **N1:** no se paraleliza ni se ejecuta el juego web en el cluster porque su logica Canvas/JavaScript corre en el navegador.
 - **N2:** speedup, eficiencia, Amdahl y Gustafson se miden solo sobre el motor C, no sobre una partida web.
-- **N3:** no se exige validacion matematica exacta del juego porque usa `Math.random()` y reglas didacticas; la validacion reproducible se hace en C con semilla fija y comparacion serial/OpenMP/MPI.
+- **N3:** no se exige validacion matematica exacta del juego porque usa reglas didacticas y eventos de juego; la validacion reproducible del motor C se hace con semilla fija y comparacion serial/OpenMP/MPI. El juego se valida mediante criterios funcionales y partidas de prueba.
 
-Todo el modelo C y el juego son sinteticos y no sustituyen protocolos de emergencia, meteorologia observada ni entrenamiento certificado.
+Todo el modelo C y el juego son sinteticos y no sustituyen protocolos de emergencia, meteorologia observada ni entrenamiento certificado. El mapa del juego es abstracto y no corresponde a una cartografia de Sachapera.

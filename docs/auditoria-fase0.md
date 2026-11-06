@@ -83,7 +83,7 @@ La auditoría se ejecutó con el clúster ya levantado. El clúster no se detuvo
 | README con clonación | Parcial | Existe `git clone <URL-del-repositorio>`; la URL real queda registrada arriba y aún falta incorporarla al README en una fase posterior. |
 | README con arranque Docker | Cumple | `README.md` documenta `docker compose -f infrastructure/compose.yaml up -d --build`. |
 | README con apertura mediante `python3 -m http.server 8765` | Falta | README indicaba abrir HTML directamente y no documentaba ese comando. |
-| README alineado con tres modos | Falta | README todavía describía seis escenarios. |
+| README alineado con tres modos | Falta | README todavía no describía la selección reducida del juego. |
 
 ## Hito 2D: demostración de laboratorio
 
@@ -93,7 +93,7 @@ La auditoría se ejecutó con el clúster ya levantado. El clúster no se detuvo
 | Ejecutar prueba de conectividad | Cumple | `scripts/test_cluster.sh`. |
 | Comparar secuencial contra paralelo | Cumple | `scripts/verify.sh`. |
 | Mostrar recursos con `docker stats` o `htop` | Falta | No existe script ni comando documentado para esta demostración. |
-| Guion de demostración de 10 minutos | Parcial | `docs/hito2-checklist.md` incluye un guion, pero aún habla de seis escenarios y no incluye `docker stats`. |
+| Guion de demostración de 10 minutos | Parcial | `docs/hito2-checklist.md` incluye un guion, pero aún no estaba alineado con las experiencias actuales ni incluía `docker stats`. |
 
 ## Requisitos específicos de las fases posteriores
 
@@ -115,7 +115,7 @@ La auditoría se ejecutó con el clúster ya levantado. El clúster no se detuvo
 
 | Punto | Estado | Evidencia |
 |---|---|---|
-| N1: paralelizar o ejecutar el juego web en el clúster | No aplica | El juego usa Canvas y JavaScript en navegador; `dron_guardian.html` carga `dron_guardian_training.js`. |
+| N1: paralelizar o ejecutar el juego web en el clúster | No aplica | El juego usa Canvas y JavaScript en navegador; `dron_guardian.html` carga el núcleo común y los módulos de cada experiencia. |
 | N2: speedup, eficiencia, Amdahl y Gustafson del juego web | No aplica | Las mediciones corresponden al motor C, no al juego. |
 | N3: validación matemática exacta del juego | No aplica | El juego usa `Math.random()` y reglas didácticas; el motor C usa semilla fija. |
 
@@ -123,7 +123,7 @@ La auditoría se ejecutó con el clúster ya levantado. El clúster no se detuvo
 
 1. El clúster funcionaba en la fecha de auditoría. `make cluster-test` terminó con `MPI_SMOKE_OK` para tres ranks, simulación MPI con `incendios=6765` y `CLUSTER_OK nodos=3 ssh=ok mpi=ok`.
 2. La correctitud C estaba verificada para la carga actual. `make verify` terminó con `VERIFICACION_OK simulaciones=20000 semilla=20261104`.
-3. La interfaz web mostraba seis escenarios: `recon`, `woodland`, `wind`, `secondary`, `interface` y `hills`.
+3. La interfaz web mostraba seis opciones en la versión observada durante la auditoría; después se redujo a tres experiencias y ahora cada una tiene mecánica propia.
 4. No existían datos de configuración por modo ni mecanismo para que el motor C los leyera.
 5. No existía un smoke test OpenMP independiente.
 6. No existía medición por los tres modos.

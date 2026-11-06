@@ -1,18 +1,18 @@
 # Dron Guardián
 
-Simulador educativo 2D de respuesta a incendios en Sachapera, Yacuiba. Una persona pilota el dron; el frente de fuego es IA, avanza según combustible y condiciones del escenario, se puede suprimir y reaparece tras una pausa de recuperación. Cada misión termina con evaluación de tiempo protegido, integridad comunitaria y focos controlados.
+Juego educativo 2D de gestión de amenazas con un dron sobre un mapa abstracto. No es un mapa real de Sachapera, una guía operativa, un sistema de alerta ni una predicción de incendios. No sustituye protocolos de seguridad ni entrenamiento certificado.
 
-El tablero enseña conceptos simplificados de viento, enfriamiento, reserva de agua y protección de rutas. No sustituye protocolos de bomberos, entrenamiento certificado, sistema de alerta ni modelo de emergencia real.
+Las experiencias practican observación con niebla, contención ante viento cambiante y priorización de viviendas y accesos. Son mecánicas didácticas simplificadas; no sustituyen protocolos de bomberos, entrenamiento certificado, sistema de alerta ni modelo de emergencia real.
 
 ## Abrir el juego
 
-Abre `index.html` (redirige a `dron_guardian.html`) mediante un servidor local y elige uno de tres modos individuales:
+Abre `index.html` (redirige a `dron_guardian.html`) mediante un servidor local y elige una de tres experiencias individuales, cada una con mecánicas propias:
 
-- **Reconocimiento · inicial · 30 s**: 3 focos, 4 cargas y 3 recargas; practica acercamiento y descarga precisa.
-- **Viento cambiante · intermedio · 40 s**: 6 focos y giro de viento a los 20 s.
-- **Interfaz comunidad-monte · avanzado+ · 50 s**: 9 focos, 3 cargas y 1 recarga; defiende el perímetro y rutas de viviendas.
+- **Reconocimiento · inicial**: explora con niebla, descubre focos con el escáner y márcalos antes de agotar batería; gana al identificar dos de tres y pierde por tiempo o batería lejos de base.
+- **Viento cambiante · intermedio**: contiene el autómata celular con barreras temporales de agua y reorienta la defensa ante avisos de cambio; gana si el sector protegido sigue intacto hasta el final.
+- **Interfaz comunidad-monte · avanzado**: prioriza tres viviendas, un camino y frentes simultáneos con poca agua y una recarga; gana manteniendo dos viviendas seguras y el camino abierto.
 
-En PC, usa `WASD`/flechas o haz clic en el mapa para volar; `Espacio` descarga agua, `R` recarga en la zona turquesa (con intentos limitados) y **Terminar misión** cierra antes del límite. Cada modo cambia la posición de base, dron, comunidad y frente. **Pantalla completa** expande el simulador al monitor. La evaluación final es didáctica, no una certificación profesional.
+En PC, usa `WASD`/flechas o haz clic en el mapa para volar; `Espacio` aplica la acción propia del modo, `R` recarga cuando las reglas lo permiten y **Terminar misión** muestra la evaluación. En móvil aparecen controles táctiles. **Pantalla completa** expande el simulador. Los resultados son didácticos y no describen decisiones para un incendio real.
 
 ```sh
 python3 -m http.server 8765
@@ -41,7 +41,10 @@ docker compose -f infrastructure/compose.yaml up -d --build
 .
 ├── index.html
 ├── dron_guardian.html
-├── dron_guardian_training.js
+├── dron_guardian_core.js
+├── mode_recon.js
+├── mode_wind.js
+├── mode_interface.js
 ├── infrastructure/
 │   ├── Dockerfile
 │   ├── compose.yaml
@@ -56,6 +59,8 @@ docker compose -f infrastructure/compose.yaml up -d --build
 └── docs/
 	├── hito1-perfil-tecnico.md
 	├── hito2-checklist.md
+	├── diseno-modos.md
+	├── relacion-juego-motor-cluster.md
 	└── contexto-ia-documentacion.md
 ```
 
@@ -111,7 +116,7 @@ make memory-modes
 
 `make benchmark` genera `data/benchmark.csv` con tres repeticiones, dos tamaños de carga y varios conteos de hilos. `make memory` muestra el máximo de memoria residente reportado por `/usr/bin/time -v`.
 
-`make performance-modes` mide cinco repeticiones por modo, serial, OpenMP (1, 2, 4 y 8 hilos) y MPI (1, 2 y 3 procesos). Genera `data/performance_modes.csv` y `data/performance_summary.csv` con medianas, mínimos, máximos, speedup y eficiencia. `make memory-modes` genera `data/memory_modes.csv` para serial, OpenMP y MPI; en MPI registra la RSS del lanzador `mpirun`, no la suma de los ranks.
+`make performance-modes` mide cinco repeticiones por modo, serial, OpenMP (1, 2, 4 y 8 hilos) y MPI (1, 2 y 3 procesos). Para repetir diez veces con el clúster detenido: `REPEAT_COUNT=10 make performance-modes`. Genera `data/performance_modes.csv` y `data/performance_summary.csv` con medianas, mínimos, máximos, desviación estándar, speedup y eficiencia. `make memory-modes` genera `data/memory_modes.csv` para serial, OpenMP y MPI; en MPI registra la RSS del lanzador `mpirun`, no la suma de los ranks.
 
 Para la demostración de recursos:
 
@@ -126,7 +131,7 @@ También se puede iniciar una carga de demostración con `./scripts/demo_recurso
 
 La interfaz y el motor de consola usan prototipos sintéticos independientes: el tablero web sirve para jugar y visualizar la idea; los programas C son la referencia para comparar serial, OpenMP y MPI. El algoritmo C simula propagación estocástica en una malla fija con terreno y viento simplificados. No representa meteorología observada, vegetación cartografiada ni riesgo operativo. Las mediciones deben repetirse en el equipo de laboratorio para el informe.
 
-Documentación: [perfil Hito 1](docs/hito1-perfil-tecnico.md), [checklist Hito 2](docs/hito2-checklist.md), [relación juego-motor-clúster](docs/relacion-juego-motor-cluster.md) y [contexto factual para una IA redactora](docs/contexto-ia-documentacion.md).
+Documentación: [diseño de los tres juegos](docs/diseno-modos.md), [relación juego-motor-clúster](docs/relacion-juego-motor-cluster.md), [perfil Hito 1](docs/hito1-perfil-tecnico.md), [checklist Hito 2](docs/hito2-checklist.md) y [contexto factual para una IA redactora](docs/contexto-ia-documentacion.md).
 # Dron Guardia
  pc uni
 cd ~/dron-guardia
