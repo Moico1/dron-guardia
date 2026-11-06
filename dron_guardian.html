@@ -4,525 +4,200 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101813">
-  <title>Dron Guardián | Operativo Chaco</title>
+  <title>Dron Guardián | Juego educativo</title>
   <style>
     :root {
       color-scheme: dark;
       --bg: #101813;
-      --panel: #1b261e;
-      --panel-raised: #27352a;
-      --ink: #edf0e7;
-      --muted: #9ba99b;
-      --line: #405044;
-      --mint: #b6dc83;
-      --aqua: #76cfd0;
-      --flame: #ff714b;
-      --sun: #f1c96e;
+      --panel: #1c2921;
+      --panel-hi: #293a2d;
+      --line: #405346;
+      --ink: #edf2e8;
+      --muted: #a4b1a3;
+      --leaf: #bddc83;
+      --water: #72ccd0;
+      --fire: #ff7651;
+      --gold: #f0cb78;
       font-family: "Avenir Next", Avenir, "Trebuchet MS", sans-serif;
     }
     * { box-sizing: border-box; }
     [hidden] { display: none !important; }
-    body {
-      margin: 0; min-width: 320px; min-height: 100vh; color: var(--ink);
-      background: radial-gradient(ellipse at 38% 42%, rgba(80, 119, 68, .15), transparent 49%),
-        repeating-linear-gradient(90deg, transparent 0 59px, rgba(197, 221, 175, .022) 60px), var(--bg);
-    }
+    body { margin: 0; min-width: 320px; min-height: 100vh; color: var(--ink); background: repeating-linear-gradient(0deg, transparent 0 42px, rgba(194,220,170,.025) 43px), #101813; }
     button { font: inherit; }
-    .app { width: 100%; max-width: 1800px; height: 100dvh; margin: auto; padding: 12px clamp(13px, 2vw, 30px) 14px; display: flex; flex-direction: column; }
-    .app:fullscreen { max-width: none; padding: 12px 24px; background: var(--bg); }
-    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
-    .brand { display: flex; align-items: center; gap: 13px; }
-    .brand-mark { width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid #6b855e; color: var(--mint); background: #233225; }
-    .brand-mark svg { width: 26px; height: 26px; }
-    .eyebrow, .micro, .metric-label { font: 700 10px/1.3 "Courier New", monospace; letter-spacing: 1.25px; text-transform: uppercase; }
-    .eyebrow { color: var(--sun); margin: 0 0 3px; }
-    h1 { margin: 0; font: 700 27px/.98 Georgia, "Times New Roman", serif; letter-spacing: 0; }
-    .top-meta { display: flex; gap: 25px; color: var(--muted); font: 10px "Courier New", monospace; text-transform: uppercase; }
-    .top-meta strong { color: var(--ink); display: block; font-size: 13px; margin-top: 5px; }
-    .live { display: inline-flex; gap: 8px; align-items: center; color: var(--mint); }
-    .live i { width: 7px; height: 7px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 12px #9dcf72; }
-    .hud { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 1px; flex: 0 0 auto; margin: 9px 0; background: var(--line); border: 1px solid var(--line); }
-    .metric { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 57px; padding: 10px 15px; background: var(--panel); }
+    .app { width: min(1600px, 100%); min-height: 100vh; margin: auto; padding: 12px clamp(10px, 2vw, 26px); display: flex; flex-direction: column; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 0 0 10px; border-bottom: 1px solid var(--line); }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-mark { width: 38px; aspect-ratio: 1; display: grid; place-items: center; border: 1px solid #6c8561; color: var(--leaf); background: #203126; font-size: 19px; }
+    .eyebrow, .micro, .metric-label, .mission-tag { margin: 0; font: 700 10px/1.35 "Courier New", monospace; text-transform: uppercase; }
+    .eyebrow { color: var(--gold); }
+    h1 { margin: 1px 0 0; font: 700 25px/1 Georgia, "Times New Roman", serif; letter-spacing: 0; }
+    .top-meta { color: var(--muted); font: 10px "Courier New", monospace; text-align: right; text-transform: uppercase; }
+    .top-meta strong { display: block; margin-top: 3px; color: var(--ink); font-size: 12px; }
+    .status { color: var(--leaf); }
+    .hud { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; margin: 9px 0; border: 1px solid var(--line); background: var(--line); }
+    .metric { min-width: 0; min-height: 53px; padding: 8px 11px; display: flex; align-items: center; justify-content: space-between; gap: 8px; background: var(--panel); }
     .metric-label { color: var(--muted); }
-    .metric-value { font: 700 20px/1 Georgia, serif; color: var(--ink); white-space: nowrap; }
-    .metric-value.warn { color: var(--flame); }
-    .water-cells { display: flex; gap: 4px; }
-    .water-cells i { width: 8px; height: 18px; border: 1px solid #579196; background: var(--aqua); transform: skew(-12deg); }
-    .water-cells i.empty { background: transparent; opacity: .43; }
-    .main-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 13px; flex: 1 1 auto; min-height: 0; align-items: stretch; }
-    .flight { min-width: 0; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; }
-    .flight-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 0 1px 7px; }
-    .flight-head h2, .side-panel h2 { margin: 0; font: 700 11px "Courier New", monospace; letter-spacing: 1.2px; text-transform: uppercase; }
-    .flight-head span { color: var(--muted); font: 10px "Courier New", monospace; }
-    .canvas-frame { position: relative; display: flex; justify-content: center; overflow: hidden; border: 1px solid #52644d; background: #1d2b20; box-shadow: 0 15px 45px rgba(0,0,0,.3); }
-    .canvas-frame { min-height: 0; height: 100%; }
-    canvas { display: block; width: auto; max-width: 100%; height: 100%; aspect-ratio: 8 / 5; touch-action: none; }
-    .fullscreen-button { min-height: 30px; padding: 0 10px; color: var(--ink); border: 1px solid var(--line); background: var(--panel); font: 10px "Courier New", monospace; cursor: pointer; }
-    .fullscreen-button:hover { border-color: var(--mint); }
-    .mission-banner { position: absolute; top: 12px; left: 12px; padding: 7px 10px; background: rgba(15,24,17,.78); border-left: 2px solid var(--sun); color: var(--ink); font: 10px "Courier New", monospace; pointer-events: none; }
-    .legend { display: flex; flex-wrap: wrap; gap: 14px; padding: 10px 2px 0; color: var(--muted); font: 10px "Courier New", monospace; }
-    .legend span { display: inline-flex; align-items: center; gap: 6px; }
-    .legend i { width: 9px; height: 9px; display: inline-block; border: 1px solid rgba(255,255,255,.25); }
-    .legend .fire-swatch { background: var(--flame); }
-    .legend .town-swatch { background: #e4d59b; }
-    .legend .base-swatch { background: var(--aqua); }
-    .side { min-height: 0; display: grid; grid-template-rows: auto auto minmax(0, 1fr); gap: 9px; overflow-y: auto; }
-    .learning-panel { grid-row: 1; }
-    .side > section:first-child { grid-row: 3; }
-    .side > section:nth-child(2) { grid-row: 2; }
-    .side-panel { padding: 15px; border: 1px solid var(--line); background: linear-gradient(140deg, #253329, #19231c); }
-    .side-panel h2 { color: var(--muted); margin-bottom: 13px; }
-    .objective { display: grid; grid-template-columns: 31px 1fr; align-items: start; gap: 10px; padding: 10px 0; border-top: 1px solid #35443a; }
-    .objective:first-of-type { border-top: 0; padding-top: 0; }
-    .objective-no { color: var(--sun); font: 700 11px "Courier New", monospace; }
-    .objective p { margin: 0; font-size: 12px; line-height: 1.45; }
-    .objective small { display: block; margin-top: 4px; color: var(--muted); font: 10px/1.4 "Courier New", monospace; }
-    .progress-track { height: 5px; margin-top: 13px; background: #3a493c; }
-    .progress-track i { display: block; height: 100%; width: 100%; background: var(--mint); transition: width .3s ease; }
-    .feedback { min-height: 34px; margin: 10px 0 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
-    .drop-button, .refill-button { width: 100%; min-height: 43px; border: 0; cursor: pointer; font-weight: 700; transition: filter .16s, transform .16s; }
-    .drop-button { color: #12201d; background: var(--aqua); }
-    .refill-button { margin-top: 7px; color: var(--ink); background: #303e32; border: 1px solid #586957; }
-    .drop-button:hover, .refill-button:hover { filter: brightness(1.08); transform: translateY(-1px); }
-    button:disabled { opacity: .4; cursor: not-allowed; transform: none !important; }
-    .keycap { display: inline-grid; place-items: center; min-width: 22px; height: 21px; padding: 0 4px; border: 1px solid #546351; background: #202b22; color: var(--ink); font: 700 10px "Courier New", monospace; }
-    .keyboard { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 10px; }
-    .touch-controls { display: none; grid-template-columns: repeat(3, 43px); grid-template-rows: repeat(2, 39px); gap: 5px; justify-content: center; margin: 12px auto 0; touch-action: none; }
+    .metric-value { font: 700 17px/1.1 Georgia, serif; text-align: right; }
+    .metric-value.warn { color: var(--fire); }
+    .main-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 310px); gap: 12px; flex: 1; min-height: 0; }
+    .flight { min-width: 0; display: flex; flex-direction: column; }
+    .flight-head { min-height: 32px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    h2 { margin: 0; font: 700 11px "Courier New", monospace; text-transform: uppercase; }
+    .fullscreen-button { padding: 6px 9px; color: var(--ink); border: 1px solid var(--line); background: var(--panel); font: 10px "Courier New", monospace; cursor: pointer; }
+    .canvas-frame { position: relative; flex: 1; min-height: 300px; overflow: hidden; border: 1px solid #50614f; background: #1c2a20; }
+    canvas { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; max-height: calc(100vh - 180px); object-fit: contain; touch-action: none; }
+    .mission-banner { position: absolute; top: 9px; left: 9px; max-width: calc(100% - 18px); padding: 6px 9px; color: var(--ink); background: rgba(13,21,15,.86); border-left: 2px solid var(--gold); font: 10px "Courier New", monospace; pointer-events: none; }
+    .legend { display: flex; flex-wrap: wrap; gap: 11px; padding: 7px 1px 0; color: var(--muted); font: 9px "Courier New", monospace; }
+    .legend span { display: inline-flex; align-items: center; gap: 5px; }
+    .legend i { width: 8px; height: 8px; border: 1px solid #82917c; }
+    .side { min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+    .side-panel { padding: 12px; border: 1px solid var(--line); background: linear-gradient(140deg, #25352a, #19241d); }
+    .side-panel h2 { margin-bottom: 8px; color: var(--muted); }
+    .objective { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 8px; padding: 7px 0; border-top: 1px solid #35443a; }
+    .objective:first-of-type { border-top: 0; }
+    .objective-no { color: var(--gold); font: 700 10px "Courier New", monospace; }
+    .objective p { margin: 0; font-size: 11px; line-height: 1.4; }
+    .objective small { display: block; margin-top: 2px; color: var(--muted); font: 10px/1.35 "Courier New", monospace; }
+    .feedback { min-height: 25px; margin: 6px 0 0; color: var(--muted); font-size: 11px; line-height: 1.45; }
+    .keyboard { display: flex; gap: 4px; flex-wrap: wrap; margin: 5px 0; }
+    .keycap { min-width: 20px; height: 20px; display: grid; place-items: center; padding: 0 3px; color: var(--ink); border: 1px solid #536353; background: #202c23; font: 700 9px "Courier New", monospace; }
+    .touch-controls { display: none; grid-template: repeat(2, 36px) / repeat(3, 42px); gap: 4px; justify-content: center; margin: 8px auto; touch-action: none; }
     .touch-controls button { border: 1px solid #576c57; color: var(--ink); background: #28382b; font-size: 18px; touch-action: none; }
-    .touch-controls button[data-key="up"] { grid-column: 2; grid-row: 1; }
-    .touch-controls button[data-key="left"] { grid-column: 1; grid-row: 2; }
-    .touch-controls button[data-key="down"] { grid-column: 2; grid-row: 2; }
-    .touch-controls button[data-key="right"] { grid-column: 3; grid-row: 2; }
-    .bottomline { display: flex; justify-content: space-between; gap: 14px; margin-top: 16px; padding-top: 11px; border-top: 1px solid var(--line); color: #839184; font: 9px "Courier New", monospace; text-transform: uppercase; }
-    .overlay { position: absolute; inset: 0; z-index: 3; display: grid; place-items: center; padding: 20px; background: rgba(10,16,11,.76); backdrop-filter: blur(5px); text-align: center; }
-    .overlay[hidden] { display: none; }
-    .dialog { width: min(850px, calc(100% - 24px)); max-height: calc(100% - 24px); overflow-y: auto; padding: 20px 22px; background: rgba(27,38,30,.97); border: 1px solid #6b805f; box-shadow: 0 15px 45px rgba(0,0,0,.35); }
-    .dialog .micro { color: var(--sun); }
-    .dialog h2 { margin: 7px 0 9px; font: 700 29px/1 Georgia, serif; }
-    .dialog p { color: #c3cec1; font-size: 13px; line-height: 1.6; }
-    .dialog button { min-height: 43px; padding: 0 18px; border: 0; background: var(--mint); color: #182118; font-weight: 800; cursor: pointer; }
-    .mode-choices { display: grid; gap: 8px; margin-top: 16px; text-align: left; }
-    .scenario-choices { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; margin-top: 13px; text-align: left; }
-    .mode-choice { display: grid; gap: 4px; width: 100%; padding: 11px 12px; color: var(--ink) !important; background: #26342a !important; border: 1px solid #52634e !important; text-align: left; }
-    .scenario-choice { display: grid; gap: 4px; width: 100%; padding: 10px 12px; color: var(--ink) !important; background: #26342a !important; border: 1px solid #52634e !important; text-align: left; cursor: pointer; }
-    .scenario-choice:hover { border-color: var(--mint) !important; background: #304331 !important; }
-    .mode-choice:hover { border-color: var(--mint) !important; background: #304331 !important; }
-    .mode-choice strong, .scenario-choice strong { font: 700 12px "Courier New", monospace; }
-    .mode-choice small, .scenario-choice small { color: #b6c2b5; font: 11px/1.35 "Avenir Next", Avenir, sans-serif; }
-    .scenario-choice em { color: var(--sun); font: normal 9px "Courier New", monospace; text-transform: uppercase; }
-    .lesson-focus { padding: 10px 11px; border-left: 2px solid var(--sun); color: #d3ddce; background: rgba(15,24,17,.42); font-size: 11px; line-height: 1.5; }
-    .lesson-focus strong { display: block; margin-bottom: 4px; color: var(--sun); font: 700 10px "Courier New", monospace; text-transform: uppercase; }
-    .scenario-summary { color: var(--muted); font: 10px/1.5 "Courier New", monospace; }
-    .back-button { min-height: 35px !important; margin-top: 4px; color: var(--ink) !important; background: #303e32 !important; border: 1px solid #586957 !important; }
-    .end-mission-button { width: 100%; min-height: 36px; margin-top: 9px; color: #f0c4ae; border: 1px solid #84513e; background: #3a2822; font: 700 10px "Courier New", monospace; text-transform: uppercase; cursor: pointer; }
-    .end-mission-button:hover { border-color: var(--flame); background: #482d24; }
-    .learning-detail { margin: 8px 0; color: #d3ddce; font-size: 11px; line-height: 1.5; }
-    .learning-detail strong { display: block; margin-bottom: 3px; color: var(--sun); font: 700 9px "Courier New", monospace; text-transform: uppercase; }
-    .outcome-actions { display: grid; gap: 7px; }
-    .outcome-actions button + button { color: var(--ink); background: #303e32; border: 1px solid #586957; }
-    @media (max-height: 760px) and (min-width: 701px) {
-      .app { padding-top: 7px; padding-bottom: 8px; }
+    .touch-controls [data-key="up"] { grid-area: 1 / 2; }
+    .touch-controls [data-key="left"] { grid-area: 2 / 1; }
+    .touch-controls [data-key="down"] { grid-area: 2 / 2; }
+    .touch-controls [data-key="right"] { grid-area: 2 / 3; }
+    .action-button { width: 100%; min-height: 37px; margin-top: 5px; border: 0; color: #14211b; background: var(--water); font-weight: 800; cursor: pointer; }
+    .action-button.muted { color: var(--ink); border: 1px solid #596a56; background: #303e32; }
+    .action-button.danger { color: #f5c5b4; border: 1px solid #89533f; background: #3a2822; }
+    button:disabled { opacity: .42; cursor: not-allowed; }
+    .learning-detail { margin: 7px 0; color: #d3ddce; font-size: 10px; line-height: 1.45; }
+    .learning-detail strong { display: block; margin-bottom: 2px; color: var(--gold); font: 700 9px "Courier New", monospace; text-transform: uppercase; }
+    .bottomline { display: flex; justify-content: space-between; gap: 10px; padding-top: 8px; margin-top: 8px; border-top: 1px solid var(--line); color: #91a091; font: 9px "Courier New", monospace; text-transform: uppercase; }
+    .overlay { position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; padding: 12px; background: rgba(8,14,9,.78); backdrop-filter: blur(4px); }
+    .dialog { width: min(760px, 100%); max-height: 100%; overflow-y: auto; padding: clamp(14px, 2.5vw, 23px); border: 1px solid #708267; background: rgba(27,39,30,.98); box-shadow: 0 14px 40px rgba(0,0,0,.4); }
+    .dialog .micro { color: var(--gold); }
+    .dialog h2 { margin: 6px 0 8px; color: var(--ink); font: 700 25px/1.05 Georgia, serif; text-transform: none; }
+    .dialog p { color: #c9d3c5; font-size: 12px; line-height: 1.5; }
+    .safety-note { padding: 8px 10px; border-left: 2px solid var(--gold); background: rgba(8,17,10,.5); }
+    .scenario-choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; margin: 12px 0; }
+    .scenario-choice { min-height: 92px; padding: 9px; display: flex; flex-direction: column; align-items: flex-start; gap: 5px; color: var(--ink); border: 1px solid #53664f; background: #26372a; text-align: left; cursor: pointer; }
+    .scenario-choice:hover, .scenario-choice[aria-pressed="true"] { border-color: var(--leaf); background: #314532; }
+    .scenario-choice em { color: var(--gold); font: normal 9px "Courier New", monospace; text-transform: uppercase; }
+    .scenario-choice strong { font: 700 13px/1.2 Georgia, serif; }
+    .scenario-choice small { color: #b7c3b4; font: 10px/1.35 "Courier New", monospace; }
+    .instruction-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 10px 0; }
+    .instruction-list p { margin: 0; padding: 7px; border-top: 1px solid #455648; }
+    .instruction-list strong { display: block; color: var(--gold); font: 700 9px "Courier New", monospace; text-transform: uppercase; }
+    .dialog-actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+    .dialog-actions button { min-height: 38px; padding: 0 13px; border: 0; color: #182118; background: var(--leaf); font-weight: 800; cursor: pointer; }
+    .dialog-actions button.muted { color: var(--ink); border: 1px solid #586957; background: #303e32; }
+    .result-good { color: var(--leaf) !important; }
+    .result-bad { color: #ff9a76 !important; }
+    @media (max-width: 760px) {
+      .app { padding: 9px; }
       .topbar { padding-bottom: 8px; }
-      .brand-mark { width: 34px; height: 34px; }
-      h1 { font-size: 23px; }
-      .hud { margin: 6px 0; }
-      .metric { min-height: 43px; padding: 6px 10px; }
-      .side-panel { padding: 9px 11px; }
-      .side-panel h2 { margin-bottom: 7px; }
-      .objective { padding: 5px 0; }
-      .objective p { font-size: 11px; }
-      .feedback { min-height: 0; margin-top: 5px; }
-      .bottomline { margin-top: 7px; padding-top: 6px; }
-    }
-    @media (max-width: 900px) and (min-width: 701px) { .main-grid { grid-template-columns: minmax(0, 1fr) 250px; gap: 10px; } .side-panel { padding: 11px; } }
-    @media (max-width: 700px) {
-      .app { height: auto; min-height: 100dvh; padding: 13px 10px 18px; }
-      .app:fullscreen { height: 100dvh; padding: 10px; }
-      .topbar { align-items: flex-start; }
-      .top-meta { display: none; }
-      h1 { font-size: 24px; }
-      .hud { grid-template-columns: repeat(2, minmax(0,1fr)); margin: 10px 0; }
-      .metric { min-height: 49px; padding: 8px 10px; }
-      .metric-value { font-size: 18px; }
-      .main-grid { display: block; }
-      .flight { display: block; }
-      .canvas-frame { height: auto; }
-      canvas { height: auto; aspect-ratio: 8 / 5; }
-      .side { margin-top: 12px; grid-template-columns: repeat(2, minmax(0,1fr)); overflow: visible; }
-      .learning-panel, .side > section:first-child, .side > section:nth-child(2) { grid-row: auto; }
-      .side-panel:last-child { grid-column: 1 / -1; }
+      h1 { font-size: 22px; }
+      .top-meta { font-size: 9px; }
+      .hud { grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 7px 0; }
+      .metric { min-height: 43px; padding: 6px 8px; }
+      .metric-value { font-size: 15px; }
+      .main-grid { display: flex; flex-direction: column; }
+      .flight-head { min-height: 28px; }
+      .canvas-frame { flex: none; min-height: 0; }
+      canvas { max-height: none; }
+      .side { overflow: visible; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .learning-panel { grid-column: 1 / -1; }
       .touch-controls { display: grid; }
-      .flight-head span { font-size: 9px; }
-      .scenario-choices { grid-template-columns: 1fr; }
-      .mission-banner { top: 6px; left: 6px; padding: 5px 7px; font-size: 8px; }
-      .legend { gap: 8px; font-size: 9px; }
-      .bottomline { flex-direction: column; gap: 5px; }
+      .bottomline { flex-direction: column; }
     }
-    @media (max-width: 390px) { .metric-label { font-size: 9px; } .side { grid-template-columns: 1fr; } .side-panel:last-child { grid-column: auto; } }
-    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+    @media (max-width: 430px) {
+      .scenario-choices { grid-template-columns: 1fr; }
+      .scenario-choice { min-height: 0; }
+      .instruction-list { grid-template-columns: 1fr; }
+      .side { grid-template-columns: 1fr; }
+      .learning-panel { grid-column: auto; }
+      .metric-label { font-size: 9px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
   </style>
 </head>
 <body>
   <main class="app">
     <header class="topbar">
-      <div class="brand">
-        <div class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M16 12v8M12 16h8M8 11 4 8m20 3 4-3M8 21l-4 3m20-3 4 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="16" r="5" stroke="currentColor" stroke-width="2"/><circle cx="4" cy="7" r="2" fill="currentColor"/><circle cx="28" cy="7" r="2" fill="currentColor"/><circle cx="4" cy="25" r="2" fill="currentColor"/><circle cx="28" cy="25" r="2" fill="currentColor"/></svg></div>
-        <div><p class="eyebrow">Gran Chaco · Operativo aéreo</p><h1>Dron Guardián</h1></div>
-      </div>
-      <div class="top-meta"><div>Sector<strong>Sachapera · Yacuiba</strong></div><div class="live"><i></i><span id="mission-status">En vuelo</span></div></div>
+      <div class="brand"><div class="brand-mark" aria-hidden="true">✣</div><div><p class="eyebrow">Juego educativo · mapa abstracto</p><h1>Dron Guardián</h1></div></div>
+      <div class="top-meta"><span class="status" id="mission-status">Selecciona modo</span><strong>Simulación sintética</strong></div>
     </header>
-    <section class="hud" aria-label="Estado de misión">
-      <div class="metric"><span class="metric-label">Tiempo protegido</span><strong class="metric-value" id="timer">00:00</strong></div>
-      <div class="metric"><span class="metric-label">Comunidad</span><strong class="metric-value" id="integrity">3 / 3</strong></div>
-      <div class="metric"><span class="metric-label">Carga de agua</span><span class="water-cells" id="water-meter" aria-label="Cinco cargas"></span></div>
-      <div class="metric"><span class="metric-label">Recargas restantes</span><strong class="metric-value" id="refill-meter">—</strong></div>
-      <div class="metric"><span class="metric-label">Dificultad</span><strong class="metric-value" id="difficulty-label">Básica</strong></div>
-      <div class="metric"><span class="metric-label">Frente activo</span><strong class="metric-value" id="monster-state">Inactivo</strong></div>
-      <div class="metric"><span class="metric-label">Focos apagados</span><strong class="metric-value" id="score">0</strong></div>
-    </section>
+    <section class="hud" id="hud" aria-label="Estado del modo" hidden></section>
     <div class="main-grid">
-      <section class="flight" aria-label="Zona de vuelo">
-        <div class="flight-head"><h2 id="view-heading">Zona de vuelo</h2><button class="fullscreen-button" id="fullscreen-toggle" aria-label="Pantalla completa">⛶ Pantalla completa</button></div>
+      <section class="flight" aria-label="Mapa del juego">
+        <div class="flight-head"><h2 id="mode-title">Zona de juego</h2><button class="fullscreen-button" id="fullscreen-toggle" type="button">Pantalla completa</button></div>
         <div class="canvas-frame">
-          <canvas id="world" width="960" height="600" aria-label="Mapa de vuelo con fuego, base y comunidad"></canvas>
-          <div class="mission-banner">MISIÓN <span id="scenario-banner">RECONOCIMIENTO</span> <span aria-hidden="true">/</span> VIENTO SIMULADO <span id="wind-direction">OESTE → ESTE</span></div>
+          <canvas id="world" width="960" height="640" aria-label="Mapa abstracto del juego educativo"></canvas>
+          <div class="mission-banner"><span class="mission-tag">EXPERIENCIA</span> <span id="mode-description">ELIGE UN MODO</span></div>
           <div class="overlay" id="overlay">
-            <div class="dialog">
-              <span class="micro">ALERTA DE INCENDIO · SACHAPERA</span>
-              <h2 id="dialog-title">Elige una situación</h2>
-              <p id="dialog-copy">Cada nivel practica una habilidad distinta. Todas las condiciones son simuladas y no sustituyen protocolos profesionales.</p>
+            <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+              <span class="micro">DRON GUARDIÁN · ENTRENAMIENTO SINTÉTICO</span>
+              <h2 id="dialog-title">Elige una experiencia</h2>
+              <p class="safety-note">Mapa abstracto, no es un mapa real de Sachapera. No es una guía operativa ni predice incendios reales; no sustituye protocolos de seguridad.</p>
+              <div class="scenario-choices" id="scenario-choices">
+                <button class="scenario-choice" data-mode="recon" data-title="Reconocimiento" data-goal="Explora el mapa, localiza tres focos y marca al menos dos antes de quedarte sin batería." data-controls="WASD/flechas vuelan; clic mueve sobre niebla o marca terreno revelado; M marca; Espacio descarga la práctica; R vuelve a base." data-observe="Escanea sectores y guarda batería para regresar."><em>Modo 1 · Inicial</em><strong>Reconocimiento</strong><small>Explora con niebla</small></button>
+                <button class="scenario-choice" data-mode="wind" data-title="Viento cambiante" data-goal="Mantén sin fuego el sector protegido durante la misión trazando barreras temporales de agua." data-controls="WASD/flechas o clic para volar; Espacio traza una barrera; R recarga al llegar a la base." data-observe="Mira la cuenta regresiva y anticipa el próximo giro."><em>Modo 2 · Intermedio</em><strong>Viento cambiante</strong><small>Contén el avance</small></button>
+                <button class="scenario-choice" data-mode="interface" data-title="Interfaz comunidad-monte" data-goal="Protege al menos dos viviendas y conserva abierto el camino durante frentes simultáneos." data-controls="WASD/flechas o clic para volar; Espacio protege el sector bajo el dron; R permite la única recarga en base." data-observe="Prioriza personas y camino; guarda reserva para volver."><em>Modo 3 · Avanzado</em><strong>Interfaz comunidad-monte</strong><small>Protege viviendas</small></button>
+              </div>
+              <div class="instructions" id="instructions" hidden>
+                <div class="instruction-list">
+                  <p><strong>Objetivo</strong><span id="instruction-goal"></span></p>
+                  <p><strong>Controles</strong><span id="instruction-controls"></span></p>
+                  <p><strong>Qué observar</strong><span id="instruction-observe"></span></p>
+                </div>
+              </div>
               <h2 id="result-title" hidden></h2>
               <p id="result-copy" hidden></p>
               <p id="result-learning" hidden></p>
-              <div class="scenario-choices" id="scenario-choices">
-                <button class="scenario-choice" data-scenario="recon"><em>Modo 1 · Inicial · 30 s</em><strong>Reconocimiento del frente</strong><small>Habilidad: observar y descargar con precisión. 3 focos · 4 cargas · 3 recargas. Objetivo: controlar el frente sin agotar la reserva.</small></button>
-                <button class="scenario-choice" data-scenario="wind"><em>Modo 2 · Intermedio · 40 s</em><strong>Viento cambiante</strong><small>Habilidad: reevaluar la prioridad. 6 focos · 4 cargas · 2 recargas. Objetivo: adaptarte al giro del viento a los 20 s.</small></button>
-                <button class="scenario-choice" data-scenario="interface"><em>Modo 3 · Avanzado+ · 50 s</em><strong>Interfaz comunidad-monte</strong><small>Habilidad: proteger perímetro y rutas. 9 focos · 3 cargas · 1 recarga. Objetivo: mantener la comunidad íntegra.</small></button>
+              <div class="dialog-actions" id="instruction-actions" hidden>
+                <button class="muted" id="change-mode" type="button">Elegir otro modo</button>
+                <button id="start-mode" type="button">Iniciar experiencia</button>
               </div>
-              <div class="outcome-actions" id="outcome-actions" hidden><button id="restart">Repetir escenario</button><button id="back-modes">Elegir otra situación</button></div>
-            </div>
+              <div class="dialog-actions" id="outcome-actions" hidden>
+                <button id="restart" type="button">Repetir escenario</button>
+                <button class="muted" id="back-modes" type="button">Elegir otra situación</button>
+              </div>
+            </section>
           </div>
         </div>
-        <div class="legend"><span><i class="fire-swatch"></i>Foco activo</span><span><i class="town-swatch"></i>Comunidad</span><span><i class="base-swatch"></i>Base de agua</span></div>
+        <div class="legend" aria-label="Leyenda del mapa"><span><i style="background:var(--fire)"></i>Fuego</span><span><i style="background:var(--water)"></i>Agua / base</span><span><i style="background:var(--gold)"></i>Objetivo del modo</span></div>
       </section>
       <aside class="side">
         <section class="side-panel">
-          <h2 id="role-heading">Objetivo de la práctica</h2>
-          <div class="objective"><span class="objective-no">01</span><p id="role-one">Detecta cómo se desplaza el frente<small>Fíjate en humo, viento y continuidad del combustible</small></p></div>
-          <div class="objective"><span class="objective-no">02</span><p id="role-two">Elige qué atender primero<small>Una descarga no sustituye un plan de seguridad</small></p></div>
-          <div class="objective"><span class="objective-no">03</span><p id="role-three">Protege comunidad y recursos<small>La reserva de agua y la recarga son limitadas</small></p></div>
-          <div class="progress-track"><i id="mission-progress"></i></div>
-          <p class="feedback" id="feedback" aria-live="polite">El dron está listo. Pulsa Iniciar vuelo.</p>
+          <h2>Objetivos de la partida</h2>
+          <div class="objective"><span class="objective-no">01</span><p id="objective-one">Descubre el mapa<small>La experiencia cambia según el modo.</small></p></div>
+          <div class="objective"><span class="objective-no">02</span><p id="objective-two">Toma una decisión<small>Observa la situación antes de actuar.</small></p></div>
+          <div class="objective"><span class="objective-no">03</span><p id="objective-three">Regresa con reserva<small>El dron es una herramienta didáctica.</small></p></div>
+          <p class="feedback" id="feedback" aria-live="polite">Elige un modo para ver sus instrucciones.</p>
         </section>
         <section class="side-panel">
-          <h2 id="controls-heading">Controles</h2>
-          <p class="feedback" id="controls-description">WASD o flechas para volar. Espacio descarga agua; R recarga en la base.</p>
+          <h2>Controles</h2>
+          <p class="feedback" id="controls-description">WASD o flechas para volar. Clic para fijar destino. Espacio y R cambian según el modo.</p>
           <div class="keyboard"><span class="keycap">W</span><span class="keycap">A</span><span class="keycap">S</span><span class="keycap">D</span><span class="keycap">↑</span><span class="keycap">←</span><span class="keycap">↓</span><span class="keycap">→</span></div>
           <div class="touch-controls" aria-label="Controles táctiles">
-            <button type="button" data-key="up" aria-label="Volar arriba">↑</button>
-            <button type="button" data-key="left" aria-label="Volar izquierda">←</button>
-            <button type="button" data-key="down" aria-label="Volar abajo">↓</button>
-            <button type="button" data-key="right" aria-label="Volar derecha">→</button>
+            <button type="button" data-key="up" aria-label="Volar arriba">↑</button><button type="button" data-key="left" aria-label="Volar izquierda">←</button><button type="button" data-key="down" aria-label="Volar abajo">↓</button><button type="button" data-key="right" aria-label="Volar derecha">→</button>
           </div>
-          <button class="drop-button" id="drop">Descargar agua · Espacio</button>
-          <button class="refill-button" id="refill">Recargar en la base · R</button>
-          <button class="end-mission-button" id="finish-mission" disabled>Terminar misión</button>
+          <button class="action-button" id="drop" type="button">Descargar · Espacio</button>
+          <button class="action-button muted" id="refill" type="button">Recargar · R</button>
+          <button class="action-button danger" id="finish-mission" type="button" disabled>Terminar misión</button>
         </section>
         <section class="side-panel learning-panel">
-          <h2 id="scenario-title">Aprendizaje del escenario</h2>
-          <p class="scenario-summary" id="scenario-summary">Selecciona una misión para ver los objetivos y conceptos que practicarás.</p>
-          <div class="lesson-focus"><strong>Qué aprenderás</strong><span id="scenario-lesson">Cada misión explica el fenómeno, una estrategia y el límite de esta simulación.</span></div>
-          <p class="learning-detail"><strong>Qué observar</strong><span id="scenario-observe">Dirección del viento, distancia al frente y rutas seguras.</span></p>
-          <p class="learning-detail"><strong>Estrategia propuesta</strong><span id="scenario-strategy">Aproximarse con margen, aplicar agua sobre focos prioritarios y confirmar el resultado.</span></p>
-          <p class="learning-detail"><strong>Límite del modelo</strong><span id="scenario-limit">Terreno, clima y respuesta simplificados; no es una predicción real.</span></p>
-          <details class="learning-notes"><summary>Ver fundamentos y precauciones</summary>
-            <h3>Combustible y continuidad</h3>
-            <p>Hierbas, ramas y copas son combustibles distintos. Cuando el combustible vegetal forma una franja continua, el frente puede encontrar nuevos puntos de ignición con más facilidad. La cobertura arbórea de esta práctica es sintética y no equivale a un inventario forestal.</p>
-            <h3>Viento y pendiente</h3>
-            <p>El viento puede inclinar las llamas y transportar pavesas; en una ladera, el fuego que sube puede precalentar vegetación situada por encima. Observa los cambios del escenario: no extrapoles estas reglas a un incendio real.</p>
-            <h3>Uso didáctico del dron</h3>
-            <p>En el juego, el dron ayuda a localizar focos y aplicar agua limitada. Una operación real requiere autorización, coordinación con el mando de incidentes, mantener separación de aeronaves tripuladas y seguir las normas aeronáuticas locales. No se debe volar sobre humo o personas sin evaluación y autorización.</p>
-            <h3>Límites de la simulación</h3>
-            <p>El modelo usa celdas, viento discreto y probabilidades simplificadas. No incluye topografía medida, humedad del combustible, meteorología real, comportamiento de aeronaves ni tácticas certificadas. La puntuación mide solo decisiones dentro del juego.</p>
-            <div class="objective"><span class="objective-no">A</span><p>Lee el viento<small>El frente puede avanzar más rápido a sotavento.</small></p></div>
-            <div class="objective"><span class="objective-no">B</span><p>Enfría y revisa<small>Un foco puede reactivarse; confirma que quedó apagado.</small></p></div>
-            <div class="objective"><span class="objective-no">C</span><p>Prioriza seguridad<small>Protege personas y rutas; no te acerques al humo.</small></p></div>
-            <p class="feedback">Material didáctico simplificado. No sustituye protocolos ni entrenamiento certificado.</p>
-          </details>
+          <h2 id="learning-title">Aprendizaje</h2>
+          <p class="learning-detail"><strong>Qué aprenderás</strong><span id="lesson">Selecciona una experiencia.</span></p>
+          <p class="learning-detail"><strong>Qué observar</strong><span id="observe">El mapa y las amenazas son abstractos.</span></p>
+          <p class="learning-detail"><strong>Estrategia de juego</strong><span id="strategy">Elige modo para ver su estrategia.</span></p>
+          <p class="learning-detail"><strong>Límite del modelo</strong><span id="limit">No representa incendios reales ni operaciones de emergencia.</span></p>
         </section>
       </aside>
     </div>
-    <footer class="bottomline"><span>Clima y propagación sintéticos · Juego educativo</span><span>No usar como sistema de alerta real</span></footer>
+    <footer class="bottomline"><span>Juego sintético y educativo · mapa abstracto</span><span>No es una guía operativa ni un predictor de incendios</span></footer>
   </main>
-<script>
-(() => {
-  'use strict';
-  return;
-  const canvas = document.querySelector('#world');
-  const ctx = canvas.getContext('2d');
-  const cols = 30, rows = 18, tile = 32;
-  const town = {x: 26, y: 7, w: 3, h: 4, integrity: 3};
-  const base = {x: 2.1, y: 15.4};
-  const drone = {x: 3.5 * tile, y: 14.4 * tile, speed: 245, angle: -0.3};
-  const keys = new Set(), fires = new Set(), particles = [], wetSpots = [];
-  const rand = (seed) => { let value = seed | 0; value = Math.imul(value ^ value >>> 16, 0x45d9f3b); value = Math.imul(value ^ value >>> 16, 0x45d9f3b); return ((value ^ value >>> 16) >>> 0) / 4294967295; };
-  const density = Array.from({length: rows}, (_, y) => Array.from({length: cols}, (_, x) => hash(x, y)));
-  let started = false, ended = false, startedAt = 0, lastFrame = 0, spreadTimer = 0, fireTimer = 0;
-  let water = 5, score = 0, hitCooldown = 0, frame = 0, moveX = 0, moveY = 0;
-  const duration = 60;
-  const cellKey = (x, y) => `${x},${y}`;
-  function hash(x, y) { return rand(x * 374761393 + y * 668265263 + 1442695041); }
-  function initFire() {
-    fires.clear();
-    for (let y = 6; y <= 12; y++) if (hash(y, 66) > .27) fires.add(cellKey(1 + Math.floor(hash(y, 77) * 2), y));
-    fires.add(cellKey(2, 9)); fires.add(cellKey(3, 11));
-  }
-  function setFeedback(text) { document.querySelector('#feedback').textContent = text; }
-  function hud(now) {
-    const elapsed = started ? Math.min(duration, (now - startedAt) / 1000) : 0;
-    const seconds = Math.floor(elapsed);
-    document.querySelector('#timer').textContent = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
-    const integrity = document.querySelector('#integrity');
-    integrity.textContent = `${town.integrity} / 3`;
-    integrity.classList.toggle('warn', town.integrity === 1);
-    document.querySelector('#score').textContent = String(score).padStart(2, '0');
-    document.querySelector('#mission-progress').style.width = `${100 - elapsed / duration * 100}%`;
-    document.querySelector('#mission-status').textContent = ended ? 'Misión cerrada' : started ? 'En vuelo' : 'En espera';
-    const meter = document.querySelector('#water-meter');
-    meter.replaceChildren();
-    for (let i = 0; i < 5; i++) { const cell = document.createElement('i'); if (i >= water) cell.className = 'empty'; meter.append(cell); }
-    document.querySelector('#drop').disabled = !started || ended || water === 0;
-    document.querySelector('#refill').disabled = !started || ended || water === 5 || !atBase();
-  }
-  function atBase() { return Math.hypot(drone.x - base.x * tile, drone.y - base.y * tile) < 54; }
-  function seedFire() {
-    const current = [...fires];
-    const fresh = [];
-    for (const point of current) {
-      const [x, y] = point.split(',').map(Number);
-      for (const [dx, dy] of [[1,0], [0,1], [0,-1], [-1,0]]) {
-        const nx = x + dx, ny = y + dy, next = cellKey(nx, ny);
-        if (nx < 0 || nx >= cols || ny < 0 || ny >= rows || fires.has(next) || isTown(nx, ny)) continue;
-        const wind = dx === 1 ? .16 : dx === -1 ? -.06 : 0;
-        const chance = .08 + density[ny][nx] * .10 + wind;
-        if (Math.random() < chance) fresh.push(next);
-      }
-    }
-    for (const point of fresh) fires.add(point);
-    for (const point of fires) {
-      const [x, y] = point.split(',').map(Number);
-      if (x + 1 >= town.x && y >= town.y - 1 && y <= town.y + town.h && Math.random() < .08) hitTown();
-    }
-  }
-  function isTown(x, y) { return x >= town.x && x < town.x + town.w && y >= town.y && y < town.y + town.h; }
-  function hitTown() {
-    if (performance.now() < hitCooldown || ended) return;
-    hitCooldown = performance.now() + 9000;
-    town.integrity--;
-    setFeedback('¡El frente alcanzó la comunidad! Vuelve al fuego y contiene el avance.');
-    if (town.integrity <= 0) endGame(false);
-  }
-  function extinguish() {
-    if (!started || ended || water <= 0) return;
-    water--;
-    const cx = Math.floor(drone.x / tile), cy = Math.floor(drone.y / tile);
-    let removed = 0;
-    for (const point of [...fires]) {
-      const [x, y] = point.split(',').map(Number);
-      const distance = Math.hypot(x - cx, y - cy);
-      if (distance <= 2.0) { fires.delete(point); removed++; }
-    }
-    particles.push({x: drone.x, y: drone.y + 14, age: 0, type: 'splash'});
-    if (removed) {
-      score += removed;
-      setFeedback(`${removed} foco${removed === 1 ? '' : 's'} apagado${removed === 1 ? '' : 's'}. Sigue patrullando el frente.`);
-    } else setFeedback('Descarga aplicada. Acércate más a las llamas para apagar focos.');
-    hud(performance.now());
-  }
-  function refill() {
-    if (!atBase() || water === 5 || ended) return;
-    water = 5;
-    setFeedback('Tanque lleno. Regresa al frente de fuego.');
-    hud(performance.now());
-  }
-  function endGame(won) {
-    ended = true;
-    document.querySelector('#dialog-title').textContent = won ? 'Comunidad protegida' : 'Misión perdida';
-    document.querySelector('#dialog-copy').textContent = won
-      ? `Protegiste la comunidad durante ${scenario.duration} segundos y apagaste ${score} focos. Revisa qué recursos conservaste.`
-      : `La comunidad perdió su última defensa. Apagaste ${score} focos. Vuelve a intentarlo.`;
-    const button = document.querySelector('#start'); button.textContent = 'Volver a despegar';
-    document.querySelector('#overlay').hidden = false;
-    hud(performance.now());
-  }
-  function startGame() {
-    if (ended) resetGame();
-    started = true; ended = false; startedAt = performance.now(); lastFrame = startedAt;
-    document.querySelector('#overlay').hidden = true;
-    setFeedback('En vuelo. Controla el dron y corta el avance del fuego.');
-    hud(startedAt);
-  }
-  function resetGame() {
-    started = false; ended = false; water = 5; score = 0; town.integrity = 3; hitCooldown = 0;
-    drone.x = 3.5 * tile; drone.y = 14.4 * tile; moveX = 0; moveY = 0;
-    spreadTimer = 0; fireTimer = 0; particles.length = 0; wetSpots.length = 0; initFire();
-    document.querySelector('#dialog-title').textContent = 'Despega, brigadista';
-    document.querySelector('#dialog-copy').textContent = 'Elige una situación, pilota el dron y termina cuando quieras para revisar tu evaluación.';
-    document.querySelector('#start').textContent = 'Iniciar vuelo';
-    document.querySelector('#overlay').hidden = false;
-    setFeedback('El dron está listo. Pulsa Iniciar vuelo.');
-    hud(performance.now());
-  }
-  function update(dt, now) {
-    if (started && !ended) {
-      const speed = drone.speed * dt;
-      const length = Math.hypot(moveX, moveY) || 1;
-      drone.x = Math.max(15, Math.min(canvas.width - 15, drone.x + moveX / length * speed));
-      drone.y = Math.max(28, Math.min(canvas.height - 18, drone.y + moveY / length * speed));
-      if (moveX || moveY) drone.angle = Math.atan2(moveY, moveX);
-      spreadTimer += dt;
-      if (spreadTimer >= 1.25) { spreadTimer -= 1.25; seedFire(); }
-      if (now - startedAt >= duration * 1000) endGame(true);
-    }
-    for (let i = particles.length - 1; i >= 0; i--) {
-      const particle = particles[i]; particle.age += dt;
-      if (particle.type === 'splash') particle.radius = 10 + particle.age * 85;
-      if (particle.age > (particle.type === 'splash' ? .55 : 2.2)) particles.splice(i, 1);
-    }
-    for (let i = wetSpots.length - 1; i >= 0; i--) { wetSpots[i].age += dt; if (wetSpots[i].age > 1.1) wetSpots.splice(i, 1); }
-    if (started && Math.floor(now / 200) !== fireTimer) { fireTimer = Math.floor(now / 200); hud(now); }
-  }
-  function drawTerrain(now) {
-    ctx.fillStyle = '#344b34'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-    for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
-      const px = x * tile, py = y * tile, value = density[y][x];
-      ctx.fillStyle = value > .75 ? '#526544' : value > .3 ? '#475b3d' : '#3f5439';
-      ctx.fillRect(px, py, tile, tile);
-      if (value > .28 && !isTown(x, y) && !(x < 4 && y > 13)) {
-        const sway = Math.sin(now / 550 + x * 2 + y) * 1.8;
-        ctx.fillStyle = value > .82 ? '#788054' : '#68784c';
-        ctx.beginPath(); ctx.arc(px + 10 + value * 10 + sway, py + 18, 5 + value * 5, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = 'rgba(24,36,25,.35)'; ctx.beginPath(); ctx.ellipse(px + 11 + value * 10, py + 22, 8, 3, 0, 0, Math.PI * 2); ctx.fill();
-      }
-      ctx.strokeStyle = 'rgba(13,25,15,.17)'; ctx.lineWidth = 1; ctx.strokeRect(px, py, tile, tile);
-    }
-    drawRoad(); drawBase(now); drawTown(now);
-  }
-  function drawRoad() {
-    ctx.strokeStyle = '#92856b'; ctx.lineWidth = 14; ctx.setLineDash([]); ctx.beginPath();
-    ctx.moveTo(0, 520); ctx.bezierCurveTo(180, 480, 250, 560, 420, 525); ctx.bezierCurveTo(570, 495, 650, 400, 840, 420); ctx.stroke();
-    ctx.strokeStyle = '#c6b58c'; ctx.lineWidth = 1; ctx.setLineDash([8, 10]); ctx.beginPath();
-    ctx.moveTo(0, 520); ctx.bezierCurveTo(180, 480, 250, 560, 420, 525); ctx.bezierCurveTo(570, 495, 650, 400, 840, 420); ctx.stroke(); ctx.setLineDash([]);
-  }
-  function drawBase(now) {
-    const x = base.x * tile, y = base.y * tile;
-    ctx.fillStyle = 'rgba(118,207,208,.12)'; ctx.beginPath(); ctx.arc(x, y, 42 + Math.sin(now / 340) * 2, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = '#76cfd0'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, 31, 0, Math.PI * 2); ctx.stroke();
-    ctx.fillStyle = '#1c6b6d'; ctx.fillRect(x - 15, y - 11, 30, 22);
-    ctx.fillStyle = '#b7ebdc'; ctx.fillRect(x - 8, y - 6, 16, 12);
-    ctx.fillStyle = '#e6f4dc'; ctx.font = '10px Courier New'; ctx.textAlign = 'center'; ctx.fillText('BASE', x, y + 49);
-  }
-  function drawTown(now) {
-    const x = town.x * tile, y = town.y * tile, w = town.w * tile, h = town.h * tile;
-    ctx.fillStyle = 'rgba(224,211,153,.14)'; ctx.fillRect(x - 9, y - 9, w + 18, h + 18);
-    ctx.strokeStyle = town.integrity === 1 && Math.sin(now / 100) > 0 ? '#ff714b' : '#d8c897'; ctx.lineWidth = 2; ctx.strokeRect(x - 9, y - 9, w + 18, h + 18);
-    for (let row = 0; row < 2; row++) for (let col = 0; col < 2; col++) {
-      const bx = x + 7 + col * 37, by = y + 7 + row * 39;
-      ctx.fillStyle = '#e2d39b'; ctx.fillRect(bx, by, 22, 20);
-      ctx.fillStyle = '#877753'; ctx.beginPath(); ctx.moveTo(bx - 3, by + 1); ctx.lineTo(bx + 11, by - 8); ctx.lineTo(bx + 25, by + 1); ctx.fill();
-      ctx.fillStyle = '#536047'; ctx.fillRect(bx + 8, by + 8, 5, 12);
-    }
-    ctx.fillStyle = '#f1e4b7'; ctx.font = '10px Courier New'; ctx.textAlign = 'center'; ctx.fillText('COMUNIDAD', x + w / 2, y - 15);
-  }
-  function drawFire(now) {
-    for (const point of fires) {
-      const [x, y] = point.split(',').map(Number), px = x * tile, py = y * tile;
-      const flicker = Math.sin(now / 68 + x * 7 + y * 3);
-      ctx.fillStyle = 'rgba(255,92,42,.16)'; ctx.beginPath(); ctx.arc(px + 16, py + 17, 26 + flicker * 3, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#973c2d'; ctx.fillRect(px + 2, py + 4, 28, 27);
-      ctx.fillStyle = '#f45f37'; ctx.beginPath(); ctx.ellipse(px + 16, py + 19, 10 + flicker, 12 + flicker * 2, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#ffb84e'; ctx.beginPath(); ctx.ellipse(px + 16, py + 21, 5, 8 + Math.max(0, flicker), -.12, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = 'rgba(40,44,37,.55)';
-      for (let puff = 0; puff < 3; puff++) {
-        const lift = (now / 180 + puff * 10 + x * 3) % 25;
-        ctx.beginPath(); ctx.arc(px + 11 + puff * 7 + Math.sin(now / 300 + puff) * 2, py + 7 - lift, 3 + lift * .15, 0, Math.PI * 2); ctx.fill();
-      }
-    }
-  }
-  function drawWind(now) {
-    ctx.strokeStyle = 'rgba(222,232,192,.27)'; ctx.lineWidth = 1;
-    for (let i = 0; i < 14; i++) {
-      const x = (i * 97 + now * .065) % canvas.width, y = (i * 139 + 55) % canvas.height;
-      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 13, y - 2); ctx.stroke();
-    }
-  }
-  function drawDrone(now) {
-    const x = drone.x, y = drone.y, rotor = Math.sin(now / 25) * 6;
-    ctx.fillStyle = 'rgba(9,17,11,.35)'; ctx.beginPath(); ctx.ellipse(x + 4, y + 10, 23, 10, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.save(); ctx.translate(x, y); ctx.rotate(drone.angle * .12);
-    ctx.strokeStyle = '#d2ded0'; ctx.lineWidth = 3; ctx.lineCap = 'round';
-    for (const signX of [-1, 1]) for (const signY of [-1, 1]) {
-      ctx.beginPath(); ctx.moveTo(signX * 5, signY * 4); ctx.lineTo(signX * 17, signY * 11); ctx.stroke();
-      ctx.strokeStyle = 'rgba(208,228,208,.72)'; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(signX * 17 - rotor, signY * 11); ctx.lineTo(signX * 17 + rotor, signY * 11); ctx.stroke();
-      ctx.strokeStyle = '#d2ded0'; ctx.lineWidth = 3;
-    }
-    ctx.fillStyle = '#27382d'; ctx.beginPath(); ctx.ellipse(0, 0, 11, 8, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#c2dc96'; ctx.beginPath(); ctx.ellipse(2, -1, 5, 4, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#73d2df'; ctx.beginPath(); ctx.arc(0, 6, 3, 0, Math.PI * 2); ctx.fill();
-    ctx.restore();
-    ctx.strokeStyle = 'rgba(216,236,202,.42)'; ctx.setLineDash([3,5]); ctx.beginPath(); ctx.arc(x, y, 34, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
-  }
-  function render(now) {
-    drawTerrain(now); drawWind(now); drawFire(now);
-    for (const splash of particles) {
-      const alpha = Math.max(0, 1 - splash.age / .55);
-      ctx.strokeStyle = `rgba(133,229,226,${alpha})`; ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.arc(splash.x, splash.y, splash.radius, 0, Math.PI * 2); ctx.stroke();
-      ctx.fillStyle = `rgba(148,238,232,${alpha * .7})`;
-      for (let i = 0; i < 8; i++) { const angle = i * Math.PI / 4; ctx.beginPath(); ctx.arc(splash.x + Math.cos(angle) * splash.radius, splash.y + Math.sin(angle) * splash.radius, 2.3, 0, Math.PI * 2); ctx.fill(); }
-    }
-    if (atBase() && water < 5) { ctx.fillStyle = '#a8eff0'; ctx.font = '10px Courier New'; ctx.textAlign = 'center'; ctx.fillText('R PARA RECARGAR', drone.x, drone.y - 28); }
-    drawDrone(now);
-  }
-  function loop(now) {
-    const dt = Math.min(.04, Math.max(0, (now - lastFrame) / 1000)); lastFrame = now; frame++;
-    update(dt, now); render(now); requestAnimationFrame(loop);
-  }
-  const keyMap = {ArrowUp:'up', KeyW:'up', ArrowDown:'down', KeyS:'down', ArrowLeft:'left', KeyA:'left', ArrowRight:'right', KeyD:'right'};
-  function refreshMovement() {
-    moveX = Number(keys.has('right')) - Number(keys.has('left'));
-    moveY = Number(keys.has('down')) - Number(keys.has('up'));
-  }
-  window.addEventListener('keydown', event => {
-    const direction = keyMap[event.code];
-    if (direction) { event.preventDefault(); keys.add(direction); refreshMovement(); }
-    if (event.code === 'Space') { event.preventDefault(); extinguish(); }
-    if (event.code === 'KeyR') refill();
-  });
-  window.addEventListener('keyup', event => { const direction = keyMap[event.code]; if (direction) { keys.delete(direction); refreshMovement(); } });
-  window.addEventListener('blur', () => { keys.clear(); refreshMovement(); });
-  document.querySelectorAll('.touch-controls button').forEach(button => {
-    const direction = button.dataset.key;
-    button.addEventListener('pointerdown', event => { event.preventDefault(); button.setPointerCapture(event.pointerId); keys.add(direction); refreshMovement(); });
-    const release = () => { keys.delete(direction); refreshMovement(); };
-    button.addEventListener('pointerup', release); button.addEventListener('pointercancel', release); button.addEventListener('lostpointercapture', release);
-  });
-  document.querySelector('#start').addEventListener('click', startGame);
-  document.querySelector('#drop').addEventListener('click', extinguish);
-  document.querySelector('#refill').addEventListener('click', refill);
-  canvas.addEventListener('pointerdown', event => {
-    if (!started || ended) return;
-    const rect = canvas.getBoundingClientRect();
-    const targetX = (event.clientX - rect.left) / rect.width * canvas.width;
-    const targetY = (event.clientY - rect.top) / rect.height * canvas.height;
-    moveX = Math.sign(targetX - drone.x); moveY = Math.sign(targetY - drone.y);
-    keys.clear();
-    if (Math.hypot(targetX - drone.x, targetY - drone.y) < 70) extinguish();
-  });
-  initFire(); hud(performance.now()); requestAnimationFrame(loop);
-})();
-</script>
-<script src="dron_guardian_training.js"></script>
+  <script src="dron_guardian_core.js"></script>
 </body>
 </html>
